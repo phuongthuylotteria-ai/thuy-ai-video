@@ -472,6 +472,14 @@ async function generateScript(){
                     2
                 );
 
+        }else if(typeof data.result === "string"){
+
+            scriptText = data.result;
+
+        }else if(data.result){
+
+            scriptText = JSON.stringify(data.result, null, 2);
+
         }else{
 
             scriptText =
@@ -1191,350 +1199,203 @@ function escapeHtml(text){
 <!-- PHƯƠNG THÙY AI VIDEO STUDIO -->
 <!-- ONE-CLICK VIDEO WORKFLOW -->
 <!-- ============================= -->
-
-<div id="autoVideoStudio" style="
-    max-width:900px;
-    margin:30px auto;
-    padding:24px;
-    background:#fff;
-    border-radius:18px;
-    box-shadow:0 8px 30px rgba(0,0,0,.08);
-    font-family:Arial,sans-serif;
-">
-
-    <h2 style="margin:0 0 8px;color:#7c3aed;font-size:24px;">
-        🚀 PHƯƠNG THÙY AI VIDEO STUDIO
-    </h2>
-
-    <p style="margin:0 0 20px;color:#666;line-height:1.6;">
-        Chỉ cần mô tả video chị muốn làm. AI sẽ xây dựng kịch bản,
-        nhân vật, chia cảnh, lời thoại và prompt hình/video.
-    </p>
-
-    <label style="display:block;margin-bottom:8px;font-weight:bold;">
-        🎯 Chị muốn tạo video gì?
-    </label>
-
-    <textarea
-        id="autoVideoRequest"
-        rows="6"
-        placeholder="Ví dụ: Tạo video TikTok 45 giây về 3 món ăn dưỡng nhan cho phụ nữ 30-50 tuổi, phong cách sang trọng, tự nhiên, có nhân vật nữ Việt Nam nói trực tiếp với camera..."
-        style="
-            width:100%;
-            box-sizing:border-box;
-            padding:14px;
-            border:1px solid #ddd;
-            border-radius:12px;
-            resize:vertical;
-            font-size:15px;
-            line-height:1.6;
-            outline:none;
-        "
-    ></textarea>
-
-    <div style="display:grid;grid-template-columns:repeat(3,1fr);gap:12px;margin-top:15px;">
-        <div style="padding:14px;background:#faf7ff;border-radius:12px;">
-            <div style="font-weight:bold;">👤 Nhân vật</div>
-            <div id="characterStatus" style="margin-top:6px;color:#777;">Chưa thiết lập</div>
-        </div>
-
-        <div style="padding:14px;background:#faf7ff;border-radius:12px;">
-            <div style="font-weight:bold;">🎙️ Giọng nói</div>
-            <div id="voiceStatus" style="margin-top:6px;color:#777;">Chưa thiết lập</div>
-        </div>
-
-        <div style="padding:14px;background:#faf7ff;border-radius:12px;">
-            <div style="font-weight:bold;">📱 Tỷ lệ video</div>
-            <div style="margin-top:6px;color:#777;">9:16</div>
-        </div>
-    </div>
-
-    <button
-        id="autoVideoButton"
-        type="button"
-        style="
-            width:100%;
-            margin-top:20px;
-            padding:16px;
-            border:0;
-            border-radius:12px;
-            background:linear-gradient(90deg,#7c3aed,#ec4899);
-            color:#fff;
-            font-size:17px;
-            font-weight:bold;
-            cursor:pointer;
-        "
-    >
-        🚀 TẠO VIDEO TỰ ĐỘNG
-    </button>
-
-    <div
-        id="autoVideoStatus"
-        style="
-            display:none;
-            margin-top:18px;
-            padding:15px;
-            border-radius:12px;
-            background:#f8f8f8;
-            color:#555;
-            line-height:1.6;
-        "
-    ></div>
-
+<div id="autoVideoStudio" style="max-width:900px;margin:30px auto;padding:24px;background:#fff;border-radius:18px;box-shadow:0 8px 30px rgba(0,0,0,.08);font-family:Arial,sans-serif;">
+  <h2 style="margin:0 0 8px;color:#7c3aed;font-size:24px;">🚀 PHƯƠNG THÙY AI VIDEO STUDIO</h2>
+  <p style="margin:0 0 20px;color:#666;line-height:1.6;">Nhập một câu lệnh. AI sẽ viết kịch bản → khóa nhân vật → chia cảnh → tạo từng clip Veo 3.1 theo tỷ lệ 9:16.</p>
+  <label style="display:block;margin-bottom:8px;font-weight:bold;">🎯 Chị muốn tạo video gì?</label>
+  <textarea id="autoVideoRequest" rows="6" placeholder="Ví dụ: Tạo video TikTok 45 giây về 3 món ăn dưỡng nhan cho phụ nữ U40-50, phong cách sang trọng, tự nhiên, nhân vật nữ Việt Nam nói trực tiếp với camera..." style="width:100%;box-sizing:border-box;padding:14px;border:1px solid #ddd;border-radius:12px;resize:vertical;font-size:15px;line-height:1.6;outline:none;"></textarea>
+  <div style="margin-top:14px;padding:14px;background:#faf7ff;border:1px solid #eadcff;border-radius:12px;">
+    <div style="font-weight:bold;margin-bottom:8px;">👩 Ảnh tham chiếu nhân vật (khuyên dùng)</div>
+    <input id="characterReference" type="file" accept="image/png,image/jpeg,image/webp" style="width:100%;">
+    <div id="referenceStatus" style="margin-top:7px;color:#777;font-size:13px;">Có ảnh tham chiếu sẽ giúp các cảnh bám nhân vật tốt hơn.</div>
+  </div>
+  <div style="display:grid;grid-template-columns:repeat(3,1fr);gap:12px;margin-top:15px;">
+    <div style="padding:14px;background:#faf7ff;border-radius:12px;"><div style="font-weight:bold;">👤 Nhân vật</div><div id="characterStatus" style="margin-top:6px;color:#777;">Chưa thiết lập</div></div>
+    <div style="padding:14px;background:#faf7ff;border-radius:12px;"><div style="font-weight:bold;">🎙️ Giọng nói</div><div id="voiceStatus" style="margin-top:6px;color:#777;">Veo tạo âm thanh theo prompt</div></div>
+    <div style="padding:14px;background:#faf7ff;border-radius:12px;"><div style="font-weight:bold;">📱 Tỷ lệ video</div><div style="margin-top:6px;color:#777;">9:16</div></div>
+  </div>
+  <button id="autoVideoButton" type="button" style="width:100%;margin-top:20px;padding:16px;border:0;border-radius:12px;background:linear-gradient(90deg,#7c3aed,#ec4899);color:#fff;font-size:17px;font-weight:bold;cursor:pointer;">🚀 TẠO VIDEO TỰ ĐỘNG</button>
+  <div id="autoVideoStatus" style="display:none;margin-top:18px;padding:15px;border-radius:12px;background:#f8f8f8;color:#555;line-height:1.6;"></div>
+  <div id="videoWorkflow" style="display:none;margin-top:18px;"></div>
 </div>
-
 <script>
 (function(){
+  "use strict";
+  const API_URL="https://phuong-thuy-ai-video.phuongthuy-lotteria.workers.dev/";
+  const button=document.getElementById("autoVideoButton");
+  const requestBox=document.getElementById("autoVideoRequest");
+  const statusBox=document.getElementById("autoVideoStatus");
+  const workflowBox=document.getElementById("videoWorkflow");
+  const characterStatus=document.getElementById("characterStatus");
+  const voiceStatus=document.getElementById("voiceStatus");
+  const referenceInput=document.getElementById("characterReference");
+  const referenceStatus=document.getElementById("referenceStatus");
+  if(!button||!requestBox||!statusBox||!workflowBox){console.error("Không tìm thấy AI Video Studio.");return;}
+  let currentScript=null;
+  let currentReference=null;
+  let generatedClips=[];
 
-    const API_URL =
-        "https://phuong-thuy-ai-video.phuongthuy-lotteria.workers.dev/";
-
-    const button =
-        document.getElementById("autoVideoButton");
-
-    const requestBox =
-        document.getElementById("autoVideoRequest");
-
-    const statusBox =
-        document.getElementById("autoVideoStatus");
-
-    const characterStatus =
-        document.getElementById("characterStatus");
-
-    const voiceStatus =
-        document.getElementById("voiceStatus");
-
-    const scriptBox =
-        document.getElementById("scriptBox");
-
-    if(!button || !requestBox || !statusBox){
-        console.error("Không tìm thấy AI Video Studio.");
-        return;
-    }
-
-    function cleanJsonText(value){
-        let text = String(value || "").trim();
-
-        text = text
-            .replace(/^```json\s*/i, "")
-            .replace(/^```\s*/i, "")
-            .replace(/\s*```$/i, "")
-            .trim();
-
-        return text;
-    }
-
-    function extractResult(data){
-        if(data == null){
-            return null;
-        }
-
-        if(typeof data === "string"){
-            const text = cleanJsonText(data);
-
-            try{
-                return JSON.parse(text);
-            }catch(e){
-                return text;
-            }
-        }
-
-        if(typeof data.result === "string"){
-            const text = cleanJsonText(data.result);
-            try{
-                return JSON.parse(text);
-            }catch(e){
-                return text;
-            }
-        }
-
-        if(data.text && typeof data.text === "string"){
-            const text = cleanJsonText(data.text);
-            try{
-                return JSON.parse(text);
-            }catch(e){
-                return text;
-            }
-        }
-
-        if(data.data && typeof data.data === "string"){
-            const text = cleanJsonText(data.data);
-            try{
-                return JSON.parse(text);
-            }catch(e){
-                return text;
-            }
-        }
-
-        if(data.script !== undefined){
-            return extractResult(data.script);
-        }
-
-        return data;
-    }
-
-    function getCharacter(data){
-        if(!data || typeof data !== "object"){
-            return null;
-        }
-
-        return data.nhan_vat_chinh ||
-               data.nhan_vat ||
-               data.character_consistency ||
-               null;
-    }
-
-    function getVoice(data){
-        if(!data || typeof data !== "object"){
-            return "";
-        }
-
-        return data.giong_noi ||
-               data.voice ||
-               data.voice_style ||
-               "Nữ Việt Nam, tự nhiên, rõ ràng";
-    }
-
-    function updateStatuses(data){
-        const character = getCharacter(data);
-
-        if(characterStatus){
-            if(character && typeof character === "object"){
-                characterStatus.textContent =
-                    character.mo_ta ||
-                    character.description ||
-                    "Đã thiết lập nhân vật";
-            }else if(character){
-                characterStatus.textContent = String(character);
-            }else{
-                characterStatus.textContent = "Đã tạo mô tả nhân vật";
-            }
-        }
-
-        if(voiceStatus){
-            voiceStatus.textContent = getVoice(data);
-        }
-    }
-
-    button.addEventListener("click", async function(){
-
-        const request =
-            requestBox.value.trim();
-
-        if(!request){
-            alert("Chị hãy nhập mong muốn tạo video trước nhé.");
-            requestBox.focus();
-            return;
-        }
-
-        button.disabled = true;
-        button.style.opacity = "0.7";
-        button.innerHTML = "⏳ AI ĐANG XÂY DỰNG VIDEO...";
-
-        statusBox.style.display = "block";
-        statusBox.innerHTML =
-            "🧠 Đang phân tích yêu cầu...<br>" +
-            "🎬 Đang xây dựng kịch bản và chia cảnh...";
-
-        try{
-
-            const response = await fetch(API_URL,{
-                method:"POST",
-                headers:{
-                    "Content-Type":"application/json"
-                },
-                body:JSON.stringify({
-                    topic:request,
-                    duration:"45 giây",
-                    style:"Video TikTok chuyên nghiệp, tự nhiên, điện ảnh, phù hợp mạng xã hội",
-                    audience:"Phụ nữ Việt Nam 25-50 tuổi",
-                    voice:"Nữ Việt Nam, tự nhiên, nhẹ nhàng, rõ ràng",
-                    extra:
-                        "Tự động xây dựng kịch bản hoàn chỉnh. Chia cảnh rõ ràng. Mỗi cảnh phải có thời lượng, hình ảnh, hành động, góc máy, lời thoại, prompt tạo ảnh và prompt tạo video. Nhân vật phải nhất quán giữa các cảnh. Giữ nguyên khuôn mặt, kiểu tóc, độ tuổi, vóc dáng và trang phục theo nhân vật chính. Lời thoại phải phù hợp tổng thời lượng. Nếu nhân vật nói trực tiếp với camera, prompt video phải yêu cầu chuyển động môi khớp lời thoại và biểu cảm tự nhiên."
-                })
-            });
-
-            let data = null;
-
-            try{
-                data = await response.json();
-            }catch(e){
-                throw new Error("Worker không trả về JSON hợp lệ.");
-            }
-
-            if(!response.ok){
-                let message = "Không thể tạo video.";
-
-                if(data){
-                    if(typeof data.error === "string"){
-                        message = data.error;
-                    }else if(data.error && typeof data.error.message === "string"){
-                        message = data.error.message;
-                    }else if(typeof data.message === "string"){
-                        message = data.message;
-                    }
-                }
-
-                throw new Error(message);
-            }
-
-            const result = extractResult(data);
-
-            if(result == null){
-                throw new Error("AI không trả về nội dung kịch bản.");
-            }
-
-            let outputText;
-
-            if(typeof result === "string"){
-                outputText = result;
-            }else{
-                outputText = JSON.stringify(result,null,2);
-            }
-
-            /*
-             * QUAN TRỌNG:
-             * Dùng lại displayScript() đã có ở phần trên,
-             * thay vì in nguyên JSON thô ra màn hình.
-             */
-            displayScript(outputText);
-
-            updateStatuses(result);
-
-            if(scriptBox){
-                scriptBox.style.display = "block";
-                scriptBox.scrollIntoView({behavior:"smooth"});
-            }
-
-            statusBox.innerHTML =
-                "<div style='font-weight:bold;font-size:17px;margin-bottom:8px;'>" +
-                "✅ AI ĐÃ TẠO XONG BỘ KỊCH BẢN VIDEO" +
-                "</div>" +
-                "<div>Đã tạo: nhân vật → cảnh → lời thoại → prompt ảnh → prompt video.</div>";
-
-        }catch(error){
-
-            console.error("AI VIDEO ERROR:",error);
-
-            statusBox.style.display = "block";
-            statusBox.innerHTML =
-                "<div style='color:#b91c1c;font-weight:bold;margin-bottom:8px;'>" +
-                "❌ Không thể tạo video" +
-                "</div>" +
-                "<div style='background:#fff;padding:12px;border-radius:8px;white-space:pre-wrap;'>" +
-                escapeHtml(error.message || "Lỗi không xác định.") +
-                "</div>";
-
-        }finally{
-
-            button.disabled = false;
-            button.style.opacity = "1";
-            button.innerHTML = "🚀 TẠO VIDEO TỰ ĐỘNG";
-        }
+  function cleanJsonText(value){return String(value||"").trim().replace(/^```json\s*/i,"").replace(/^```\s*/i,"").replace(/\s*```$/i,"").trim();}
+  function parseMaybeJson(value){if(value==null)return null;if(typeof value==="object")return value;const text=cleanJsonText(value);try{return JSON.parse(text);}catch(e){return text;}}
+  function extractResult(data){
+    if(data==null)return null;
+    if(typeof data==="string")return parseMaybeJson(data);
+    if(data.result!==undefined)return parseMaybeJson(data.result);
+    if(data.text!==undefined)return parseMaybeJson(data.text);
+    if(data.data!==undefined&&typeof data.data==="string")return parseMaybeJson(data.data);
+    if(data.script!==undefined)return extractResult(data.script);
+    return data;
+  }
+  function getCharacter(data){if(!data||typeof data!=="object")return null;return data.nhan_vat_chinh||data.nhan_vat||data.character_consistency||data.character_consistency_rules||null;}
+  function getScenes(data){if(!data||typeof data!=="object")return [];const scenes=data.canh_quay||data.cac_canh||data.scenes||[];return Array.isArray(scenes)?scenes:[];}
+  function getDuration(scene){const raw=scene.thoi_luong_giay??scene.thoi_luong??scene.duration_seconds??scene.duration??8;const n=Number(String(raw).replace(/[^0-9.]/g,""));return [4,6,8].includes(n)?n:(n<5?4:n<7?6:8);}
+  function sceneLabel(scene,index){return scene.so_thu_tu||scene.so_canh||scene.scene_number||index+1;}
+  function escapeLocal(text){if(typeof escapeHtml==="function")return escapeHtml(text);return String(text??"").replace(/&/g,"&amp;").replace(/</g,"&lt;").replace(/>/g,"&gt;").replace(/\"/g,"&quot;").replace(/'/g,"&#039;");}
+  function setStatus(html){statusBox.style.display="block";statusBox.innerHTML=html;}
+  function fileToBase64(file){return new Promise(function(resolve,reject){const reader=new FileReader();reader.onload=function(){const result=String(reader.result||"");const comma=result.indexOf(",");resolve({mimeType:file.type||"image/jpeg",base64:comma>=0?result.slice(comma+1):result});};reader.onerror=reject;reader.readAsDataURL(file);});}
+  async function callWorker(payload){
+    const response=await fetch(API_URL,{method:"POST",headers:{"Content-Type":"application/json"},body:JSON.stringify(payload)});
+    let data;try{data=await response.json();}catch(e){throw new Error("Worker không trả về JSON hợp lệ.");}
+    if(!response.ok){const message=typeof data.error==="string"?data.error:(data.error&&data.error.message)||data.message||"Worker báo lỗi.";throw new Error(message);}
+    return data;
+  }
+  function updateStatuses(data){
+    const character=getCharacter(data);
+    if(characterStatus)characterStatus.textContent=character&&typeof character==="object"?(character.mo_ta||character.description||"Đã khóa nhân vật NV01"):character?String(character).slice(0,140):"Đã tạo hồ sơ nhân vật NV01";
+    if(voiceStatus)voiceStatus.textContent=data.giong_noi||data.voice||"Veo tạo âm thanh theo prompt";
+  }
+  function getVideoPrompt(scene,character){
+    const prompt=scene.prompt_tao_video||scene.video_prompt||scene.visual_description||scene.hinh_anh||"";
+    const characterText=typeof character==="string"?character:JSON.stringify(character||{});
+    const dialogue=scene.loi_thoai||scene.dialogue||"";
+    return [prompt,"Vertical 9:16, photorealistic cinematic video.","Use the SAME main character identity throughout this project. Do not change face, age, hairstyle, body proportions or outfit.","Character continuity reference: "+characterText,dialogue?"If the character speaks, use natural Vietnamese dialogue with visible lip movement synchronized to the words and natural facial expressions: "+dialogue:"","No subtitles, no captions, no on-screen text, no watermark."].filter(Boolean).join("\n\n");
+  }
+  function renderWorkflow(script){
+    const scenes=getScenes(script);const character=getCharacter(script);workflowBox.style.display="block";workflowBox.innerHTML="";
+    const header=document.createElement("div");header.style.cssText="background:#faf5ff;border:1px solid #eadcff;border-radius:14px;padding:16px;margin-bottom:14px;";
+    const target=Number(script.total_duration_seconds||script.duration_seconds||45);const actual=scenes.reduce((sum,s)=>sum+getDuration(s),0);
+    header.innerHTML="<div style='font-size:18px;font-weight:700;color:#6d28d9;'>🎬 BỘ ĐIỀU KHIỂN TẠO VIDEO</div><div style='margin-top:8px;color:#555;'>"+scenes.length+" cảnh · mục tiêu "+target+" giây · clip Veo "+actual+" giây sau khi quy đổi về 4/6/8 giây.</div><div style='margin-top:7px;color:#92400e;font-size:13px;'>ℹ️ Veo 3.1 tạo clip 4/6/8 giây. Bản này tạo từng clip thật; chưa giả vờ ghép MP4 nếu Worker chưa có bộ xử lý video.</div>";
+    workflowBox.appendChild(header);
+    const allButton=document.createElement("button");allButton.type="button";allButton.textContent="🎬 TẠO TẤT CẢ CẢNH VIDEO";allButton.style.cssText="width:100%;padding:14px;border:0;border-radius:10px;background:#111827;color:white;font-weight:700;cursor:pointer;margin-bottom:10px;";workflowBox.appendChild(allButton);
+    const fullButton=document.createElement("button");fullButton.type="button";fullButton.textContent="🚀 TẠO 1 VIDEO LIỀN MẠCH";fullButton.style.cssText="width:100%;padding:14px;border:0;border-radius:10px;background:linear-gradient(90deg,#059669,#0ea5e9);color:white;font-weight:700;cursor:pointer;margin-bottom:14px;";workflowBox.appendChild(fullButton);
+    const list=document.createElement("div");
+    scenes.forEach(function(scene,index){
+      const card=document.createElement("div");card.id="videoSceneCard_"+index;card.style.cssText="border:1px solid #e5e7eb;border-radius:14px;padding:15px;margin-bottom:12px;background:white;";
+      const duration=getDuration(scene);const prompt=getVideoPrompt(scene,character);
+      card.innerHTML="<div style='font-weight:700;color:#6d28d9;'>🎥 CẢNH "+escapeLocal(String(sceneLabel(scene,index)))+" · "+duration+" giây</div>"+
+        "<div style='margin-top:8px;color:#555;line-height:1.55;'><b>🗣️ Lời thoại:</b> "+escapeLocal(scene.loi_thoai||scene.dialogue||"Không thoại")+"</div>"+
+        "<details style='margin-top:10px;'><summary style='cursor:pointer;font-weight:600;'>Xem prompt Veo</summary><pre style='white-space:pre-wrap;background:#111827;color:#f9fafb;padding:12px;border-radius:8px;font-size:12px;line-height:1.5;'>"+escapeLocal(prompt)+"</pre></details>";
+      const action=document.createElement("div");action.style.cssText="display:flex;gap:8px;align-items:center;margin-top:10px;flex-wrap:wrap;";
+      const one=document.createElement("button");one.type="button";one.className="sceneGenerateButton";one.textContent="▶ TẠO CẢNH NÀY";one.style.cssText="padding:10px 14px;border:0;border-radius:8px;background:#7c3aed;color:#fff;font-weight:700;cursor:pointer;";
+      const state=document.createElement("span");state.textContent="Chưa tạo";state.style.color="#777";action.appendChild(one);action.appendChild(state);card.appendChild(action);list.appendChild(card);
+      one.addEventListener("click",function(){generateScene(scene,index,prompt,duration,state,one);});
     });
+    workflowBox.appendChild(list);
+    allButton.addEventListener("click",async function(){allButton.disabled=true;allButton.style.opacity=".65";generatedClips=[];for(let i=0;i<scenes.length;i++){const card=document.getElementById("videoSceneCard_"+i);const btn=card?card.querySelector(".sceneGenerateButton"):null;const spans=card?card.querySelectorAll("span"):[];const state=spans.length?spans[spans.length-1]:null;await generateScene(scenes[i],i,getVideoPrompt(scenes[i],character),getDuration(scenes[i]),state,btn);}allButton.disabled=false;allButton.style.opacity="1";renderFinalSummary();});
+    fullButton.addEventListener("click",async function(){await generateFullVideo(scenes,character,fullButton);});
+  }
+  async function waitForVideo(operation,onProgress){
+    const started=Date.now();
+    const timeout=12*60*1000;
+    while(Date.now()-started<timeout){
+      const data=await callWorker({action:"video_status",operation:operation});
+      if(data.done===true){
+        return data.videoUrl||data.video_url||null;
+      }
+      if(typeof onProgress==="function")onProgress("⏳ Veo đang xử lý...");
+      await new Promise(function(resolve){setTimeout(resolve,10000);});
+    }
+    throw new Error("Veo xử lý quá lâu. Operation: "+operation);
+  }
 
+  async function generateScene(scene,index,prompt,duration,state,buttonEl){
+    if(buttonEl)buttonEl.disabled=true;if(state)state.textContent="⏳ Đang gửi Veo...";setStatus("🎬 Đang tạo cảnh "+(index+1)+"...<br>⏳ Veo xử lý bất đồng bộ, vui lòng chờ.");
+    try{
+      const payload={action:"generate_video",model:"veo-3.1-fast-generate-preview",prompt:prompt,duration_seconds:duration,aspect_ratio:"9:16"};if(currentReference)payload.reference_image=currentReference;
+      const data=await callWorker(payload);
+      if(!data.operation)throw new Error("Worker chưa trả operation để theo dõi Veo.");
+      if(state)state.textContent="⏳ Veo đang dựng...";
+      const videoUrl=await waitForVideo(data.operation,function(message){if(state)state.textContent=message;});
+      if(!videoUrl)throw new Error("Veo hoàn tất nhưng Worker chưa trả videoUrl.");
+      generatedClips[index]={index:index,url:videoUrl,scene:scene};
+      if(state)state.textContent="✅ Đã tạo xong";if(buttonEl){buttonEl.disabled=false;buttonEl.textContent="🔄 TẠO LẠI";}
+      const card=document.getElementById("videoSceneCard_"+index);if(card){const old=card.querySelector("video");if(old)old.remove();const video=document.createElement("video");video.controls=true;video.playsInline=true;video.preload="metadata";video.src=videoUrl;video.style.cssText="width:100%;margin-top:12px;border-radius:10px;background:#000;max-height:520px;";card.appendChild(video);const link=document.createElement("a");link.href=videoUrl;link.target="_blank";link.rel="noopener";link.textContent="⬇ MỞ CLIP VIDEO";link.style.cssText="display:inline-block;margin-top:8px;padding:8px 12px;border-radius:8px;background:#ec4899;color:white;text-decoration:none;font-weight:700;";card.appendChild(link);}
+      setStatus("✅ Đã tạo xong cảnh "+(index+1)+".");
+    }catch(error){if(state)state.textContent="❌ "+(error.message||"Lỗi");if(buttonEl)buttonEl.disabled=false;setStatus("<b style='color:#b91c1c;'>❌ Cảnh "+(index+1)+" lỗi</b><br><span style='white-space:pre-wrap;'>"+escapeLocal(error.message||"Lỗi không xác định.")+"</span>");}
+  }
+  async function blobToBase64(url){
+    const response=await fetch(url,{cache:"no-store"});
+    if(!response.ok)throw new Error("Không tải được video trung gian để nối video.");
+    const blob=await response.blob();
+    const reader=new FileReader();
+    return await new Promise(function(resolve,reject){
+      reader.onload=function(){const value=String(reader.result||"");const comma=value.indexOf(",");resolve({base64:comma>=0?value.slice(comma+1):value,mimeType:blob.type||"video/mp4"});};
+      reader.onerror=reject;
+      reader.readAsDataURL(blob);
+    });
+  }
+  function chooseExtensionCount(target){
+    const n=Math.max(8,Number(target)||45);
+    let best={count:0,total:8,diff:Math.abs(n-8)};
+    for(let count=1;count<=20;count++){
+      const total=8+count*7;const diff=Math.abs(n-total);
+      if(diff<best.diff){best={count:count,total:total,diff:diff};}
+    }
+    return best;
+  }
+  async function generateFullVideo(scenes,character,fullButton){
+    if(!scenes.length){setStatus("❌ Chưa có cảnh để tạo video.");return;}
+    if(!window.confirm("Chế độ 1 VIDEO LIỀN MẠCH dùng Veo Extension. Video bắt đầu 8 giây và mỗi lần nối thêm 7 giây. Với mục tiêu 45 giây, thời lượng gần nhất là 43 giây. Tiếp tục?"))return;
+    fullButton.disabled=true;fullButton.style.opacity=".65";
+    try{
+      const target=Number(currentScript&& (currentScript.target_duration_seconds||currentScript.total_duration_seconds||currentScript.duration_seconds))||45;
+      const plan=chooseExtensionCount(target);
+      const maxScenes=Math.min(scenes.length,plan.count+1);
+      setStatus("🚀 Đang tạo video liền mạch...<br>⏳ Cảnh mở đầu 8 giây.");
+      const firstPrompt=getVideoPrompt(scenes[0],character)+"\nThis is the opening shot of one continuous video. Establish the same character clearly for all later extensions.";
+      const firstPayload={action:"generate_video",model:"veo-3.1-fast-generate-preview",prompt:firstPrompt,duration_seconds:8,aspect_ratio:"9:16"};
+      if(currentReference)firstPayload.reference_image=currentReference;
+      const first=await callWorker(firstPayload);
+      const firstUrl=await waitForVideo(first.operation);
+      if(!firstUrl)throw new Error("Không nhận được video mở đầu.");
+      let currentUrl=firstUrl;
+      const chain=[];
+      chain.push(currentUrl);
+      for(let i=1;i<maxScenes;i++){
+        setStatus("🚀 Đang nối cảnh "+(i+1)+"/"+maxScenes+"...<br>⏳ Mỗi lần nối thêm 7 giây.");
+        const videoData=await blobToBase64(currentUrl);
+        const scenePrompt=getVideoPrompt(scenes[i],character)+"\nContinue seamlessly from the supplied previous Veo video. Preserve the exact same main character identity, face, hair, body proportions, outfit, voice character, lighting style and cinematic realism. Continue the story naturally from the previous ending. Do not restart the scene.";
+        const ext=await callWorker({action:"extend_video",prompt:scenePrompt,video_base64:videoData.base64,video_mimeType:videoData.mimeType,aspect_ratio:"9:16"});
+        currentUrl=await waitForVideo(ext.operation);
+        if(!currentUrl)throw new Error("Veo không trả video sau khi nối cảnh "+(i+1)+".");
+        chain.push(currentUrl);
+      }
+      const final=document.createElement("div");
+      final.style.cssText="margin-top:15px;padding:16px;background:#ecfdf5;border:1px solid #a7f3d0;border-radius:12px;";
+      final.innerHTML="<b style='color:#047857;'>🎉 VIDEO LIỀN MẠCH ĐÃ XONG</b><br><span style='color:#555;'>Thời lượng xấp xỉ "+plan.total+" giây. Veo Extension ghép phần mở đầu và các phần nối thành một video duy nhất.</span>";
+      const video=document.createElement("video");video.controls=true;video.playsInline=true;video.preload="metadata";video.src=currentUrl;video.style.cssText="width:100%;margin-top:12px;border-radius:10px;background:#000;max-height:620px;";final.appendChild(video);
+      const link=document.createElement("a");link.href=currentUrl;link.target="_blank";link.rel="noopener";link.textContent="⬇ MỞ / LƯU VIDEO HOÀN CHỈNH";link.style.cssText="display:inline-block;margin-top:10px;padding:10px 14px;border-radius:8px;background:#059669;color:#fff;text-decoration:none;font-weight:700;";final.appendChild(link);
+      workflowBox.insertBefore(final,workflowBox.children[2]||null);
+      setStatus("🎉 Hoàn tất video liền mạch: khoảng "+plan.total+" giây.");
+    }catch(error){console.error(error);setStatus("<b style='color:#b91c1c;'>❌ Không thể tạo video liền mạch</b><br><span style='white-space:pre-wrap;'>"+escapeLocal(error.message||"Lỗi không xác định.")+"</span>");}
+    finally{fullButton.disabled=false;fullButton.style.opacity="1";}
+  }
+
+  function renderFinalSummary(){const ready=generatedClips.filter(Boolean).length;const total=getScenes(currentScript).length;if(ready===total&&total>0)setStatus("<b style='color:#15803d;'>🎉 ĐÃ TẠO XONG "+total+" CLIP VIDEO</b><br>Đã tạo video thật cho tất cả cảnh. Chưa tự ghép MP4 trong trình duyệt để tránh làm nặng máy và tránh báo thành công giả.");}
+
+  button.addEventListener("click",async function(){
+    const request=requestBox.value.trim();if(!request){alert("Chị hãy nhập mong muốn tạo video trước nhé.");requestBox.focus();return;}
+    button.disabled=true;button.style.opacity=".7";button.textContent="⏳ ĐANG XÂY DỰNG...";workflowBox.style.display="none";workflowBox.innerHTML="";generatedClips=[];setStatus("🧠 Bước 1/2: AI đang viết kịch bản, khóa nhân vật và chia cảnh...");
+    try{
+      if(referenceInput&&referenceInput.files&&referenceInput.files[0]){currentReference=await fileToBase64(referenceInput.files[0]);referenceStatus.textContent="✅ Đã nạp ảnh tham chiếu: "+referenceInput.files[0].name;}else{currentReference=null;referenceStatus.textContent="Không có ảnh tham chiếu. AI sẽ giữ nhân vật bằng mô tả nhất quán.";}
+      const match=request.match(/\b(\d+)\s*(?:giây|s|seconds?)\b/i);const duration=match?match[1]+" giây":"45 giây";
+      const response=await callWorker({action:"script",topic:request,duration:duration,style:"Video TikTok chuyên nghiệp, tự nhiên, điện ảnh, vertical 9:16",audience:"Phụ nữ Việt Nam 25-50 tuổi",voice:"Nữ Việt Nam, tự nhiên, nhẹ nhàng, rõ ràng",extra:"Trả JSON thuần, không markdown. Tạo hồ sơ nhân vật cố định gồm face, hair, physique, outfit, consistency. Chia cảnh với thời lượng 4/6/8 giây phù hợp Veo 3.1. Mỗi cảnh có visual_description, character_action, camera_angle, dialogue, image_prompt và video_prompt. Nếu nhân vật nói, video_prompt phải yêu cầu lời thoại tiếng Việt, khẩu hình khớp lời thoại, biểu cảm tự nhiên. Không phụ đề, không text, không watermark."});
+      const result=extractResult(response);if(!result||typeof result!=="object")throw new Error("AI không trả về kịch bản JSON hợp lệ.");currentScript=result;updateStatuses(result);displayScript(JSON.stringify(result,null,2));setStatus("🟢 Bước 1/2 hoàn tất.<br>🎬 Bước 2/2: bấm <b>TẠO TẤT CẢ CẢNH VIDEO</b> để tạo video thật bằng Veo 3.1.");renderWorkflow(result);workflowBox.scrollIntoView({behavior:"smooth",block:"start"});
+    }catch(error){console.error(error);setStatus("<b style='color:#b91c1c;'>❌ Không thể tạo video</b><br><span style='white-space:pre-wrap;'>"+escapeLocal(error.message||"Lỗi không xác định.")+"</span>");}
+    finally{button.disabled=false;button.style.opacity="1";button.textContent="🚀 TẠO VIDEO TỰ ĐỘNG";}
+  });
 })();
 </script>
-    
+
 </body>
 </html>
