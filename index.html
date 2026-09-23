@@ -587,17 +587,19 @@ function displayScript(scriptText){
     // ==============================
 
     const title =
-        data.tieu_de ||
-        "Kịch bản video";
+    data.tieu_de ||
+    data.title ||
+    "Kịch bản video";
 
-    const audience =
-        data.doi_tuong ||
-        "";
+const audience =
+    data.doi_tuong ||
+    data.target_audience ||
+    "";
 
-    const style =
-        data.phong_cach ||
-        "";
-
+const style =
+    data.phong_cach ||
+    data.style ||
+    "";
 
     // ==============================
     // 4. NHÂN VẬT
@@ -605,8 +607,9 @@ function displayScript(scriptText){
 
     const character =
         data.nhan_vat_chinh ||
-        data.nhan_vat ||
-        {};
+    data.nhan_vat ||
+    data.character_consistency ||
+    {};
 
 
     // ==============================
