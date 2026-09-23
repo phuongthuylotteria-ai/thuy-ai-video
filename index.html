@@ -1189,48 +1189,36 @@ function escapeHtml(text){
 </script>
 <!-- ============================= -->
 <!-- PHƯƠNG THÙY AI VIDEO STUDIO -->
-<!-- BƯỚC 1: ONE-CLICK VIDEO -->
+<!-- ONE-CLICK VIDEO WORKFLOW -->
 <!-- ============================= -->
 
 <div id="autoVideoStudio" style="
-    max-width: 900px;
-    margin: 30px auto;
-    padding: 24px;
-    background: #ffffff;
-    border-radius: 18px;
-    box-shadow: 0 8px 30px rgba(0,0,0,0.08);
-    font-family: Arial, sans-serif;
+    max-width:900px;
+    margin:30px auto;
+    padding:24px;
+    background:#fff;
+    border-radius:18px;
+    box-shadow:0 8px 30px rgba(0,0,0,.08);
+    font-family:Arial,sans-serif;
 ">
 
-    <h2 style="
-        margin: 0 0 8px;
-        color: #7c3aed;
-        font-size: 24px;
-    ">
+    <h2 style="margin:0 0 8px;color:#7c3aed;font-size:24px;">
         🚀 PHƯƠNG THÙY AI VIDEO STUDIO
     </h2>
 
-    <p style="
-        margin: 0 0 20px;
-        color: #666;
-        line-height: 1.6;
-    ">
-        Chỉ cần nói cho AI biết chị muốn làm video gì.
-        Hệ thống sẽ từng bước tự xây dựng video hoàn chỉnh.
+    <p style="margin:0 0 20px;color:#666;line-height:1.6;">
+        Chỉ cần mô tả video chị muốn làm. AI sẽ xây dựng kịch bản,
+        nhân vật, chia cảnh, lời thoại và prompt hình/video.
     </p>
 
-    <label style="
-        display:block;
-        margin-bottom:8px;
-        font-weight:bold;
-    ">
+    <label style="display:block;margin-bottom:8px;font-weight:bold;">
         🎯 Chị muốn tạo video gì?
     </label>
 
     <textarea
         id="autoVideoRequest"
         rows="6"
-        placeholder="Ví dụ: Tạo video TikTok 45 giây về 3 món ăn dưỡng nhan cho phụ nữ 30-50 tuổi, phong cách sang trọng, tự nhiên, có nhân vật nữ Việt Nam, nói chuyện trực tiếp với camera..."
+        placeholder="Ví dụ: Tạo video TikTok 45 giây về 3 món ăn dưỡng nhan cho phụ nữ 30-50 tuổi, phong cách sang trọng, tự nhiên, có nhân vật nữ Việt Nam nói trực tiếp với camera..."
         style="
             width:100%;
             box-sizing:border-box;
@@ -1244,55 +1232,21 @@ function escapeHtml(text){
         "
     ></textarea>
 
-    <div style="
-        display:grid;
-        grid-template-columns:repeat(3,1fr);
-        gap:12px;
-        margin-top:15px;
-    ">
-
-        <div style="
-            padding:14px;
-            background:#faf7ff;
-            border-radius:12px;
-        ">
+    <div style="display:grid;grid-template-columns:repeat(3,1fr);gap:12px;margin-top:15px;">
+        <div style="padding:14px;background:#faf7ff;border-radius:12px;">
             <div style="font-weight:bold;">👤 Nhân vật</div>
-            <div id="characterStatus" style="
-                margin-top:6px;
-                color:#777;
-            ">
-                Chưa thiết lập
-            </div>
+            <div id="characterStatus" style="margin-top:6px;color:#777;">Chưa thiết lập</div>
         </div>
 
-        <div style="
-            padding:14px;
-            background:#faf7ff;
-            border-radius:12px;
-        ">
+        <div style="padding:14px;background:#faf7ff;border-radius:12px;">
             <div style="font-weight:bold;">🎙️ Giọng nói</div>
-            <div id="voiceStatus" style="
-                margin-top:6px;
-                color:#777;
-            ">
-                Chưa thiết lập
-            </div>
+            <div id="voiceStatus" style="margin-top:6px;color:#777;">Chưa thiết lập</div>
         </div>
 
-        <div style="
-            padding:14px;
-            background:#faf7ff;
-            border-radius:12px;
-        ">
+        <div style="padding:14px;background:#faf7ff;border-radius:12px;">
             <div style="font-weight:bold;">📱 Tỷ lệ video</div>
-            <div style="
-                margin-top:6px;
-                color:#777;
-            ">
-                9:16
-            </div>
+            <div style="margin-top:6px;color:#777;">9:16</div>
         </div>
-
     </div>
 
     <button
@@ -1330,7 +1284,7 @@ function escapeHtml(text){
 </div>
 
 <script>
-(function () {
+(function(){
 
     const API_URL =
         "https://phuong-thuy-ai-video.phuongthuy-lotteria.workers.dev/";
@@ -1344,305 +1298,240 @@ function escapeHtml(text){
     const statusBox =
         document.getElementById("autoVideoStatus");
 
-    if (!button || !requestBox || !statusBox) {
-        console.error("Không tìm thấy giao diện AI Video Studio.");
+    const characterStatus =
+        document.getElementById("characterStatus");
+
+    const voiceStatus =
+        document.getElementById("voiceStatus");
+
+    const scriptBox =
+        document.getElementById("scriptBox");
+
+    if(!button || !requestBox || !statusBox){
+        console.error("Không tìm thấy AI Video Studio.");
         return;
     }
 
-    button.addEventListener("click", async function () {
+    function cleanJsonText(value){
+        let text = String(value || "").trim();
+
+        text = text
+            .replace(/^```json\s*/i, "")
+            .replace(/^```\s*/i, "")
+            .replace(/\s*```$/i, "")
+            .trim();
+
+        return text;
+    }
+
+    function extractResult(data){
+        if(data == null){
+            return null;
+        }
+
+        if(typeof data === "string"){
+            const text = cleanJsonText(data);
+
+            try{
+                return JSON.parse(text);
+            }catch(e){
+                return text;
+            }
+        }
+
+        if(typeof data.result === "string"){
+            const text = cleanJsonText(data.result);
+            try{
+                return JSON.parse(text);
+            }catch(e){
+                return text;
+            }
+        }
+
+        if(data.text && typeof data.text === "string"){
+            const text = cleanJsonText(data.text);
+            try{
+                return JSON.parse(text);
+            }catch(e){
+                return text;
+            }
+        }
+
+        if(data.data && typeof data.data === "string"){
+            const text = cleanJsonText(data.data);
+            try{
+                return JSON.parse(text);
+            }catch(e){
+                return text;
+            }
+        }
+
+        if(data.script !== undefined){
+            return extractResult(data.script);
+        }
+
+        return data;
+    }
+
+    function getCharacter(data){
+        if(!data || typeof data !== "object"){
+            return null;
+        }
+
+        return data.nhan_vat_chinh ||
+               data.nhan_vat ||
+               data.character_consistency ||
+               null;
+    }
+
+    function getVoice(data){
+        if(!data || typeof data !== "object"){
+            return "";
+        }
+
+        return data.giong_noi ||
+               data.voice ||
+               data.voice_style ||
+               "Nữ Việt Nam, tự nhiên, rõ ràng";
+    }
+
+    function updateStatuses(data){
+        const character = getCharacter(data);
+
+        if(characterStatus){
+            if(character && typeof character === "object"){
+                characterStatus.textContent =
+                    character.mo_ta ||
+                    character.description ||
+                    "Đã thiết lập nhân vật";
+            }else if(character){
+                characterStatus.textContent = String(character);
+            }else{
+                characterStatus.textContent = "Đã tạo mô tả nhân vật";
+            }
+        }
+
+        if(voiceStatus){
+            voiceStatus.textContent = getVoice(data);
+        }
+    }
+
+    button.addEventListener("click", async function(){
 
         const request =
             requestBox.value.trim();
 
-        if (!request) {
-
-            alert(
-                "Chị hãy nhập mong muốn tạo video trước nhé."
-            );
-
+        if(!request){
+            alert("Chị hãy nhập mong muốn tạo video trước nhé.");
             requestBox.focus();
-
             return;
         }
 
         button.disabled = true;
-
         button.style.opacity = "0.7";
-
-        button.innerHTML =
-            "⏳ AI ĐANG LÊN KỊCH BẢN...";
+        button.innerHTML = "⏳ AI ĐANG XÂY DỰNG VIDEO...";
 
         statusBox.style.display = "block";
-
         statusBox.innerHTML =
-            "🧠 Đang gửi yêu cầu tới AI...<br><br>" +
-            "⏳ Đang phân tích mong muốn của chị...";
+            "🧠 Đang phân tích yêu cầu...<br>" +
+            "🎬 Đang xây dựng kịch bản và chia cảnh...";
 
-        try {
+        try{
 
-            /*
-             * Gửi một yêu cầu duy nhất tới Worker.
-             *
-             * Worker hiện tại của chị đang nhận các trường:
-             * topic
-             * duration
-             * style
-             * audience
-             * voice
-             * extra
-             */
-
-            const response = await fetch(
-                API_URL,
-                {
-                    method: "POST",
-
-                    headers: {
-                        "Content-Type":
-                            "application/json"
-                    },
-
-                    body: JSON.stringify({
-
-                        topic: request,
-
-                        duration: "45 giây",
-
-                        style:
-                            "Video TikTok chuyên nghiệp, tự nhiên, điện ảnh, phù hợp mạng xã hội",
-
-                        audience:
-                            "Phụ nữ Việt Nam 25-50 tuổi",
-
-                        voice:
-                            "Nữ Việt Nam, tự nhiên, nhẹ nhàng, rõ ràng",
-
-                        extra:
-                            "Tự động xây dựng kịch bản hoàn chỉnh từ yêu cầu của người dùng. Chia thành các cảnh rõ ràng. Mỗi cảnh phải có thời lượng, nội dung hình ảnh, hành động, lời thoại, prompt tạo ảnh và prompt tạo video. Nhân vật phải nhất quán giữa các cảnh. Lời thoại phải phù hợp tổng thời lượng."
-                    })
-                }
-            );
+            const response = await fetch(API_URL,{
+                method:"POST",
+                headers:{
+                    "Content-Type":"application/json"
+                },
+                body:JSON.stringify({
+                    topic:request,
+                    duration:"45 giây",
+                    style:"Video TikTok chuyên nghiệp, tự nhiên, điện ảnh, phù hợp mạng xã hội",
+                    audience:"Phụ nữ Việt Nam 25-50 tuổi",
+                    voice:"Nữ Việt Nam, tự nhiên, nhẹ nhàng, rõ ràng",
+                    extra:
+                        "Tự động xây dựng kịch bản hoàn chỉnh. Chia cảnh rõ ràng. Mỗi cảnh phải có thời lượng, hình ảnh, hành động, góc máy, lời thoại, prompt tạo ảnh và prompt tạo video. Nhân vật phải nhất quán giữa các cảnh. Giữ nguyên khuôn mặt, kiểu tóc, độ tuổi, vóc dáng và trang phục theo nhân vật chính. Lời thoại phải phù hợp tổng thời lượng. Nếu nhân vật nói trực tiếp với camera, prompt video phải yêu cầu chuyển động môi khớp lời thoại và biểu cảm tự nhiên."
+                })
+            });
 
             let data = null;
 
-            try {
-
-                data =
-                    await response.json();
-
-            } catch (jsonError) {
-
-                throw new Error(
-                    "Worker không trả về dữ liệu JSON hợp lệ."
-                );
-
+            try{
+                data = await response.json();
+            }catch(e){
+                throw new Error("Worker không trả về JSON hợp lệ.");
             }
 
-            if (!response.ok) {
+            if(!response.ok){
+                let message = "Không thể tạo video.";
 
-                let message =
-                    "Không thể tạo kịch bản.";
-
-                if (data) {
-
-                    if (
-                        typeof data.error ===
-                        "string"
-                    ) {
-
-                        message =
-                            data.error;
-
-                    } else if (
-                        data.error &&
-                        typeof data.error.message ===
-                        "string"
-                    ) {
-
-                        message =
-                            data.error.message;
-
-                    } else if (
-                        typeof data.message ===
-                        "string"
-                    ) {
-
-                        message =
-                            data.message;
+                if(data){
+                    if(typeof data.error === "string"){
+                        message = data.error;
+                    }else if(data.error && typeof data.error.message === "string"){
+                        message = data.error.message;
+                    }else if(typeof data.message === "string"){
+                        message = data.message;
                     }
                 }
 
                 throw new Error(message);
             }
 
-            /*
-             * Worker có thể trả kết quả ở nhiều dạng.
-             * Chúng ta lấy dạng phù hợp mà không làm
-             * thay đổi Worker hiện tại.
-             */
+            const result = extractResult(data);
 
-            let result = data;
-
-            if (
-                data &&
-                typeof data.result === "string"
-            ) {
-
-                result =
-                    data.result;
-
-            } else if (
-                data &&
-                typeof data.text === "string"
-            ) {
-
-                result =
-                    data.text;
-
-            } else if (
-                data &&
-                data.data &&
-                typeof data.data === "string"
-            ) {
-
-                result =
-                    data.data;
-
-            } else if (
-                data &&
-                data.result &&
-                typeof data.result === "object"
-            ) {
-
-                result =
-                    data.result;
+            if(result == null){
+                throw new Error("AI không trả về nội dung kịch bản.");
             }
 
-            let outputText = "";
+            let outputText;
 
-            if (
-                typeof result ===
-                "string"
-            ) {
-
-                outputText =
-                    result;
-
-            } else {
-
-                outputText =
-                    JSON.stringify(
-                        result,
-                        null,
-                        2
-                    );
+            if(typeof result === "string"){
+                outputText = result;
+            }else{
+                outputText = JSON.stringify(result,null,2);
             }
 
             /*
-             * Hiển thị kết quả
+             * QUAN TRỌNG:
+             * Dùng lại displayScript() đã có ở phần trên,
+             * thay vì in nguyên JSON thô ra màn hình.
              */
+            displayScript(outputText);
+
+            updateStatuses(result);
+
+            if(scriptBox){
+                scriptBox.style.display = "block";
+                scriptBox.scrollIntoView({behavior:"smooth"});
+            }
 
             statusBox.innerHTML =
-                "<div style='font-weight:bold;" +
-                "font-size:17px;" +
-                "margin-bottom:12px;'>" +
-                "✅ AI ĐÃ TẠO KỊCH BẢN" +
+                "<div style='font-weight:bold;font-size:17px;margin-bottom:8px;'>" +
+                "✅ AI ĐÃ TẠO XONG BỘ KỊCH BẢN VIDEO" +
                 "</div>" +
+                "<div>Đã tạo: nhân vật → cảnh → lời thoại → prompt ảnh → prompt video.</div>";
 
-                "<div style='" +
-                "white-space:pre-wrap;" +
-                "background:#fff;" +
-                "border:1px solid #ddd;" +
-                "border-radius:10px;" +
-                "padding:15px;" +
-                "line-height:1.6;" +
-                "max-height:600px;" +
-                "overflow:auto;" +
-                "'>" +
+        }catch(error){
 
-                escapeHtml(outputText) +
+            console.error("AI VIDEO ERROR:",error);
 
-                "</div>";
-
-        } catch (error) {
-
-            console.error(
-                "AI VIDEO ERROR:",
-                error
-            );
-
-            statusBox.style.display =
-                "block";
-
+            statusBox.style.display = "block";
             statusBox.innerHTML =
-                "<div style='" +
-                "color:#b91c1c;" +
-                "font-weight:bold;" +
-                "margin-bottom:8px;" +
-                "'>" +
-
-                "❌ Không thể tạo kịch bản" +
-
+                "<div style='color:#b91c1c;font-weight:bold;margin-bottom:8px;'>" +
+                "❌ Không thể tạo video" +
                 "</div>" +
-
-                "<div style='" +
-                "background:#fff;" +
-                "padding:12px;" +
-                "border-radius:8px;" +
-                "white-space:pre-wrap;" +
-                "'>" +
-
-                escapeHtml(
-                    error.message ||
-                    "Lỗi không xác định."
-                ) +
-
+                "<div style='background:#fff;padding:12px;border-radius:8px;white-space:pre-wrap;'>" +
+                escapeHtml(error.message || "Lỗi không xác định.") +
                 "</div>";
 
-        } finally {
+        }finally{
 
-            button.disabled =
-                false;
-
-            button.style.opacity =
-                "1";
-
-            button.innerHTML =
-                "🚀 TẠO VIDEO TỰ ĐỘNG";
+            button.disabled = false;
+            button.style.opacity = "1";
+            button.innerHTML = "🚀 TẠO VIDEO TỰ ĐỘNG";
         }
-
     });
-
-
-    /*
-     * Bảo vệ nội dung JSON/HTML
-     * để kết quả AI không phá giao diện.
-     */
-
-    function escapeHtml(text) {
-
-        return String(text)
-            .replace(
-                /&/g,
-                "&amp;"
-            )
-            .replace(
-                /</g,
-                "&lt;"
-            )
-            .replace(
-                />/g,
-                "&gt;"
-            )
-            .replace(
-                /"/g,
-                "&quot;"
-            )
-            .replace(
-                /'/g,
-                "&#039;"
-            );
-    }
 
 })();
 </script>
