@@ -508,8 +508,21 @@ async function generateScript(){
 
 function displayScript(scriptText){
 
-    const box =
-        document.getElementById("scriptContent");
+    const box = document.getElementById("scriptContent");
+
+    if(!box){
+        return;
+    }
+
+    let content = scriptText;
+
+    if(typeof scriptText === "object"){
+        try{
+            content = JSON.stringify(scriptText, null, 2);
+        }catch(error){
+            content = String(scriptText);
+        }
+    }
 
     box.innerHTML = `
         <div
@@ -519,9 +532,45 @@ function displayScript(scriptText){
                 line-height:1.7;
             "
         >
-            ${escapeHtml(scriptText)}
+            ${escapeHtml(content)}
         </div>
     `;
+}
+Sau đó cấu trúc cuối file phải giống thế này:
+function displayScript(scriptText){
+
+    const box = document.getElementById("scriptContent");
+
+    if(!box){
+        return;
+    }
+
+    let content = scriptText;
+
+    if(typeof scriptText === "object"){
+        try{
+            content = JSON.stringify(scriptText, null, 2);
+        }catch(error){
+            content = String(scriptText);
+        }
+    }
+
+    box.innerHTML = `
+        <div
+            class="scene-content"
+            style="
+                white-space:pre-wrap;
+                line-height:1.7;
+            "
+        >
+            ${escapeHtml(content)}
+        </div>
+    `;
+}
+
+
+function escapeHtml(text){
+    ...
 }
 
 
