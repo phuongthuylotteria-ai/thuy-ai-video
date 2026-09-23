@@ -689,40 +689,317 @@ function escapeHtml(text){
 <script>
 (function () {
 
-    const button = document.getElementById("autoVideoButton");
-    const requestBox = document.getElementById("autoVideoRequest");
-    const statusBox = document.getElementById("autoVideoStatus");
+    const API_URL =
+        "https://phuong-thuy-ai-video.phuongthuy-lotteria.workers.dev/";
+
+    const button =
+        document.getElementById("autoVideoButton");
+
+    const requestBox =
+        document.getElementById("autoVideoRequest");
+
+    const statusBox =
+        document.getElementById("autoVideoStatus");
 
     if (!button || !requestBox || !statusBox) {
+        console.error("Không tìm thấy giao diện AI Video Studio.");
         return;
     }
 
-    button.addEventListener("click", function () {
+    button.addEventListener("click", async function () {
 
-        const request = requestBox.value.trim();
+        const request =
+            requestBox.value.trim();
 
         if (!request) {
-            alert("Chị hãy nhập mong muốn tạo video trước nhé.");
+
+            alert(
+                "Chị hãy nhập mong muốn tạo video trước nhé."
+            );
+
             requestBox.focus();
+
             return;
         }
+
+        button.disabled = true;
+
+        button.style.opacity = "0.7";
+
+        button.innerHTML =
+            "⏳ AI ĐANG LÊN KỊCH BẢN...";
 
         statusBox.style.display = "block";
 
         statusBox.innerHTML =
-            "🧠 Đã nhận yêu cầu của chị.<br><br>" +
-            "⏳ Đây mới là bước giao diện thử nghiệm.<br>" +
-            "Các module AI tạo kịch bản, chia cảnh, nhân vật, giọng nói, video và dựng phim sẽ được kết nối ở các bước tiếp theo.";
+            "🧠 Đang gửi yêu cầu tới AI...<br><br>" +
+            "⏳ Đang phân tích mong muốn của chị...";
 
-        button.disabled = true;
-        button.style.opacity = "0.7";
+        try {
 
-        setTimeout(function () {
-            button.disabled = false;
-            button.style.opacity = "1";
-        }, 1500);
+            /*
+             * Gửi một yêu cầu duy nhất tới Worker.
+             *
+             * Worker hiện tại của chị đang nhận các trường:
+             * topic
+             * duration
+             * style
+             * audience
+             * voice
+             * extra
+             */
+
+            const response = await fetch(
+                API_URL,
+                {
+                    method: "POST",
+
+                    headers: {
+                        "Content-Type":
+                            "application/json"
+                    },
+
+                    body: JSON.stringify({
+
+                        topic: request,
+
+                        duration: "45 giây",
+
+                        style:
+                            "Video TikTok chuyên nghiệp, tự nhiên, điện ảnh, phù hợp mạng xã hội",
+
+                        audience:
+                            "Phụ nữ Việt Nam 25-50 tuổi",
+
+                        voice:
+                            "Nữ Việt Nam, tự nhiên, nhẹ nhàng, rõ ràng",
+
+                        extra:
+                            "Tự động xây dựng kịch bản hoàn chỉnh từ yêu cầu của người dùng. Chia thành các cảnh rõ ràng. Mỗi cảnh phải có thời lượng, nội dung hình ảnh, hành động, lời thoại, prompt tạo ảnh và prompt tạo video. Nhân vật phải nhất quán giữa các cảnh. Lời thoại phải phù hợp tổng thời lượng."
+                    })
+                }
+            );
+
+            let data = null;
+
+            try {
+
+                data =
+                    await response.json();
+
+            } catch (jsonError) {
+
+                throw new Error(
+                    "Worker không trả về dữ liệu JSON hợp lệ."
+                );
+
+            }
+
+            if (!response.ok) {
+
+                let message =
+                    "Không thể tạo kịch bản.";
+
+                if (data) {
+
+                    if (
+                        typeof data.error ===
+                        "string"
+                    ) {
+
+                        message =
+                            data.error;
+
+                    } else if (
+                        data.error &&
+                        typeof data.error.message ===
+                        "string"
+                    ) {
+
+                        message =
+                            data.error.message;
+
+                    } else if (
+                        typeof data.message ===
+                        "string"
+                    ) {
+
+                        message =
+                            data.message;
+                    }
+                }
+
+                throw new Error(message);
+            }
+
+            /*
+             * Worker có thể trả kết quả ở nhiều dạng.
+             * Chúng ta lấy dạng phù hợp mà không làm
+             * thay đổi Worker hiện tại.
+             */
+
+            let result = data;
+
+            if (
+                data &&
+                typeof data.result === "string"
+            ) {
+
+                result =
+                    data.result;
+
+            } else if (
+                data &&
+                typeof data.text === "string"
+            ) {
+
+                result =
+                    data.text;
+
+            } else if (
+                data &&
+                data.data &&
+                typeof data.data === "string"
+            ) {
+
+                result =
+                    data.data;
+
+            } else if (
+                data &&
+                data.result &&
+                typeof data.result === "object"
+            ) {
+
+                result =
+                    data.result;
+            }
+
+            let outputText = "";
+
+            if (
+                typeof result ===
+                "string"
+            ) {
+
+                outputText =
+                    result;
+
+            } else {
+
+                outputText =
+                    JSON.stringify(
+                        result,
+                        null,
+                        2
+                    );
+            }
+
+            /*
+             * Hiển thị kết quả
+             */
+
+            statusBox.innerHTML =
+                "<div style='font-weight:bold;" +
+                "font-size:17px;" +
+                "margin-bottom:12px;'>" +
+                "✅ AI ĐÃ TẠO KỊCH BẢN" +
+                "</div>" +
+
+                "<div style='" +
+                "white-space:pre-wrap;" +
+                "background:#fff;" +
+                "border:1px solid #ddd;" +
+                "border-radius:10px;" +
+                "padding:15px;" +
+                "line-height:1.6;" +
+                "max-height:600px;" +
+                "overflow:auto;" +
+                "'>" +
+
+                escapeHtml(outputText) +
+
+                "</div>";
+
+        } catch (error) {
+
+            console.error(
+                "AI VIDEO ERROR:",
+                error
+            );
+
+            statusBox.style.display =
+                "block";
+
+            statusBox.innerHTML =
+                "<div style='" +
+                "color:#b91c1c;" +
+                "font-weight:bold;" +
+                "margin-bottom:8px;" +
+                "'>" +
+
+                "❌ Không thể tạo kịch bản" +
+
+                "</div>" +
+
+                "<div style='" +
+                "background:#fff;" +
+                "padding:12px;" +
+                "border-radius:8px;" +
+                "white-space:pre-wrap;" +
+                "'>" +
+
+                escapeHtml(
+                    error.message ||
+                    "Lỗi không xác định."
+                ) +
+
+                "</div>";
+
+        } finally {
+
+            button.disabled =
+                false;
+
+            button.style.opacity =
+                "1";
+
+            button.innerHTML =
+                "🚀 TẠO VIDEO TỰ ĐỘNG";
+        }
 
     });
+
+
+    /*
+     * Bảo vệ nội dung JSON/HTML
+     * để kết quả AI không phá giao diện.
+     */
+
+    function escapeHtml(text) {
+
+        return String(text)
+            .replace(
+                /&/g,
+                "&amp;"
+            )
+            .replace(
+                /</g,
+                "&lt;"
+            )
+            .replace(
+                />/g,
+                "&gt;"
+            )
+            .replace(
+                /"/g,
+                "&quot;"
+            )
+            .replace(
+                /'/g,
+                "&#039;"
+            );
+    }
 
 })();
 </script>
