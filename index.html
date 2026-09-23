@@ -516,12 +516,9 @@ function displayScript(scriptText){
 
     let data = scriptText;
 
-    /*
-     * AI có thể trả về:
-     * 1. Object JSON
-     * 2. Chuỗi JSON
-     * 3. ```json ... ```
-     */
+    // ==============================
+    // 1. ĐỌC JSON GEMINI
+    // ==============================
 
     try{
 
@@ -529,27 +526,38 @@ function displayScript(scriptText){
 
             data = data.trim();
 
-            // Bỏ markdown code fence nếu Gemini trả về
             data = data
                 .replace(/^```json\s*/i, "")
                 .replace(/^```\s*/i, "")
                 .replace(/\s*```$/i, "")
                 .trim();
 
-            try{
-                data = JSON.parse(data);
-            }catch(e){
-                // Nếu không phải JSON thì giữ nguyên
-            }
+            data = JSON.parse(data);
         }
 
-    }catch(e){
-        console.log("Không parse được JSON:", e);
+    }catch(error){
+
+        console.log("JSON parse error:", error);
+
+        box.innerHTML = `
+            <div style="
+                padding:18px;
+                background:#fff7ed;
+                border-radius:12px;
+                line-height:1.7;
+            ">
+                ${escapeHtml(String(scriptText))}
+            </div>
+        `;
+
+        return;
     }
 
-    /*
-     * Nếu data vẫn là object nhưng bên trong có result
-     */
+
+    // ==============================
+    // 2. NẾU WORKER TRẢ VỀ result
+    // ==============================
+
     if(
         data &&
         typeof data === "object" &&
@@ -566,59 +574,58 @@ function displayScript(scriptText){
 
             data = JSON.parse(resultText);
 
-        }catch(e){
+        }catch(error){
 
-            console.log("Không parse được result:", e);
+            console.log("Không đọc được result:", error);
 
         }
     }
 
-    /*
-     * Nếu không phải JSON hợp lệ
-     */
-    if(
-        typeof data !== "object" ||
-        data === null
-    ){
 
-        box.innerHTML = `
-            <div style="
-                padding:18px;
-                background:#fff;
-                border-radius:12px;
-                white-space:pre-wrap;
-                line-height:1.7;
-            ">
-                ${escapeHtml(String(scriptText))}
-            </div>
-        `;
-
-        return;
-    }
+    // ==============================
+    // 3. LẤY THÔNG TIN VIDEO
+    // ==============================
 
     const title =
         data.tieu_de ||
-        data.tieu_de_video ||
-        data.title ||
         "Kịch bản video";
 
+    const audience =
+        data.doi_tuong ||
+        "";
+
+    const style =
+        data.phong_cach ||
+        "";
+
+
+    // ==============================
+    // 4. NHÂN VẬT
+    // ==============================
+
     const character =
+        data.nhan_vat_chinh ||
         data.nhan_vat ||
         {};
 
+
+    // ==============================
+    // 5. LẤY DANH SÁCH CẢNH
+    // ==============================
+
     const scenes =
+        data.canh_quay ||
         data.cac_canh ||
-        data.canh ||
         data.scenes ||
         [];
 
+
     let html = "";
 
-    /*
-     * =========================
-     * TIÊU ĐỀ
-     * =========================
-     */
+
+    // ==============================
+    // TIÊU ĐỀ
+    // ==============================
 
     html += `
         <div style="
@@ -648,11 +655,9 @@ function displayScript(scriptText){
     `;
 
 
-    /*
-     * =========================
-     * NHÂN VẬT
-     * =========================
-     */
+    // ==============================
+    // THÔNG TIN VIDEO
+    // ==============================
 
     html += `
         <div style="
@@ -666,36 +671,111 @@ function displayScript(scriptText){
             <div style="
                 font-size:18px;
                 font-weight:700;
-                margin-bottom:12px;
                 color:#6d28d9;
+                margin-bottom:12px;
             ">
-                👩 NHÂN VẬT
+                📋 THÔNG TIN VIDEO
             </div>
     `;
 
+
+    if(audience){
+
+        html += `
+            <div style="margin-bottom:8px;">
+                <b>👥 Đối tượng:</b>
+                ${escapeHtml(audience)}
+            </div>
+        `;
+    }
+
+
+    if(style){
+
+        html += `
+            <div>
+                <b>🎨 Phong cách:</b>
+                ${escapeHtml(style)}
+            </div>
+        `;
+    }
+
+
+    html += `</div>`;
+
+
+    // ==============================
+    // NHÂN VẬT
+    // ==============================
+
+    html += `
+        <div style="
+            background:#fff;
+            border:1px solid #eadcff;
+            border-radius:14px;
+            padding:18px;
+            margin-bottom:20px;
+        ">
+
+            <div style="
+                font-size:19px;
+                font-weight:700;
+                color:#6d28d9;
+                margin-bottom:14px;
+            ">
+                👩 NHÂN VẬT CHÍNH
+            </div>
+    `;
+
+
     if(typeof character === "object"){
 
-        if(character.mo_ta){
+        const characterDescription =
+            character.mo_ta ||
+            character.description ||
+            "";
+
+        const outfit =
+            character.trang_phuc ||
+            character.outfit ||
+            "";
+
+        const consistency =
+            character.nhat_quan ||
+            character.quy_tac_nhat_quan ||
+            character.character_consistency ||
+            "";
+
+
+        if(characterDescription){
 
             html += `
-                <div style="margin-bottom:8px;">
-                    <b>Mô tả:</b>
-                    ${escapeHtml(character.mo_ta)}
+                <div style="
+                    margin-bottom:10px;
+                    line-height:1.6;
+                ">
+                    <b>👤 Mô tả:</b><br>
+                    ${escapeHtml(characterDescription)}
                 </div>
             `;
         }
 
-        if(character.trang_phuc){
+
+        if(outfit){
 
             html += `
-                <div style="margin-bottom:8px;">
-                    <b>Trang phục:</b>
-                    ${escapeHtml(character.trang_phuc)}
+                <div style="
+                    margin-bottom:10px;
+                    line-height:1.6;
+                ">
+                    <b>👗 Trang phục:</b><br>
+                    ${escapeHtml(outfit)}
                 </div>
             `;
         }
 
-        if(character.quy_tac_nhat_quan){
+
+        if(consistency){
 
             html += `
                 <div style="
@@ -703,30 +783,10 @@ function displayScript(scriptText){
                     border-left:4px solid #f97316;
                     padding:12px;
                     border-radius:8px;
-                    margin-top:12px;
+                    line-height:1.6;
                 ">
-                    <b>🔒 Giữ nhân vật nhất quán:</b><br>
-                    ${escapeHtml(character.quy_tac_nhat_quan)}
-                </div>
-            `;
-        }
-
-        if(character.gioi_tinh){
-
-            html += `
-                <div style="margin-top:8px;">
-                    <b>Giới tính:</b>
-                    ${escapeHtml(character.gioi_tinh)}
-                </div>
-            `;
-        }
-
-        if(character.do_tuoi){
-
-            html += `
-                <div style="margin-top:8px;">
-                    <b>Độ tuổi:</b>
-                    ${escapeHtml(character.do_tuoi)}
+                    <b>🔒 QUY TẮC NHẤT QUÁN:</b><br>
+                    ${escapeHtml(consistency)}
                 </div>
             `;
         }
@@ -734,26 +794,23 @@ function displayScript(scriptText){
     }else{
 
         html += `
-            <div>
-                ${escapeHtml(String(character))}
-            </div>
+            ${escapeHtml(String(character))}
         `;
     }
+
 
     html += `</div>`;
 
 
-    /*
-     * =========================
-     * DANH SÁCH CẢNH
-     * =========================
-     */
+    // ==============================
+    // CÁC CẢNH
+    // ==============================
 
     html += `
         <div style="
-            font-size:20px;
+            font-size:21px;
             font-weight:700;
-            margin:20px 0 12px;
+            margin:20px 0 14px;
         ">
             🎞️ CÁC CẢNH VIDEO
         </div>
@@ -764,37 +821,43 @@ function displayScript(scriptText){
 
         html += `
             <div style="
-                padding:18px;
                 background:#fff7ed;
+                padding:16px;
                 border-radius:12px;
             ">
-                ⚠️ AI chưa trả về danh sách cảnh đúng định dạng.
+                ⚠️ Chưa tìm thấy danh sách cảnh.
             </div>
         `;
 
     }else{
 
-        scenes.forEach((scene, index) => {
+        scenes.forEach(function(scene,index){
 
             const sceneNumber =
+                scene.so_thu_tu ||
                 scene.so_canh ||
                 scene.scene_number ||
                 index + 1;
 
-            const duration =
-                scene.thoi_luong ||
-                scene.duration ||
-                scene.duration_seconds ||
+            const section =
+                scene.phan_canh ||
+                scene.scene_type ||
                 "";
 
-            const hook =
-                scene.hook ||
+            const duration =
+                scene.thoi_luong_giay ||
+                scene.thoi_luong ||
+                scene.duration ||
+                "";
+
+            const camera =
+                scene.goc_may ||
+                scene.camera_angle ||
                 "";
 
             const visual =
                 scene.hinh_anh ||
                 scene.visual_description ||
-                scene.mo_ta_hinh_anh ||
                 "";
 
             const action =
@@ -805,11 +868,6 @@ function displayScript(scriptText){
             const dialogue =
                 scene.loi_thoai ||
                 scene.dialogue ||
-                "";
-
-            const camera =
-                scene.goc_may ||
-                scene.camera_angle ||
                 "";
 
             const imagePrompt =
@@ -823,7 +881,7 @@ function displayScript(scriptText){
                 "";
 
             const sceneId =
-                "scene_" + index;
+                "pt_scene_" + index;
 
 
             html += `
@@ -836,12 +894,12 @@ function displayScript(scriptText){
                     box-shadow:0 4px 15px rgba(0,0,0,.05);
                 ">
 
+
                     <div style="
                         display:flex;
                         justify-content:space-between;
                         align-items:center;
-                        gap:10px;
-                        margin-bottom:15px;
+                        margin-bottom:14px;
                     ">
 
                         <div style="
@@ -855,7 +913,7 @@ function displayScript(scriptText){
                         <div style="
                             background:#f3e8ff;
                             color:#6d28d9;
-                            padding:6px 10px;
+                            padding:6px 11px;
                             border-radius:20px;
                             font-size:13px;
                             font-weight:600;
@@ -867,17 +925,15 @@ function displayScript(scriptText){
             `;
 
 
-            if(hook){
+            if(section){
 
                 html += `
                     <div style="
                         margin-bottom:12px;
-                        padding:12px;
-                        background:#fff7ed;
-                        border-radius:10px;
+                        color:#6b7280;
+                        font-weight:600;
                     ">
-                        <b>🎯 Hook:</b><br>
-                        ${escapeHtml(hook)}
+                        🎯 ${escapeHtml(section)}
                     </div>
                 `;
             }
@@ -886,14 +942,12 @@ function displayScript(scriptText){
             if(visual){
 
                 html += `
-                    <div style="margin-bottom:12px;">
+                    <div style="
+                        margin-bottom:12px;
+                        line-height:1.65;
+                    ">
                         <b>🖼️ Hình ảnh:</b><br>
-                        <div style="
-                            margin-top:5px;
-                            line-height:1.6;
-                        ">
-                            ${escapeHtml(visual)}
-                        </div>
+                        ${escapeHtml(visual)}
                     </div>
                 `;
             }
@@ -902,14 +956,12 @@ function displayScript(scriptText){
             if(action){
 
                 html += `
-                    <div style="margin-bottom:12px;">
+                    <div style="
+                        margin-bottom:12px;
+                        line-height:1.65;
+                    ">
                         <b>🎭 Hành động:</b><br>
-                        <div style="
-                            margin-top:5px;
-                            line-height:1.6;
-                        ">
-                            ${escapeHtml(action)}
-                        </div>
+                        ${escapeHtml(action)}
                     </div>
                 `;
             }
@@ -920,18 +972,14 @@ function displayScript(scriptText){
                 html += `
                     <div style="
                         margin-bottom:12px;
-                        padding:13px;
                         background:#f0fdf4;
                         border-left:4px solid #22c55e;
+                        padding:13px;
                         border-radius:8px;
+                        line-height:1.65;
                     ">
                         <b>🗣️ Lời thoại:</b><br>
-                        <div style="
-                            margin-top:6px;
-                            line-height:1.6;
-                        ">
-                            ${escapeHtml(dialogue)}
-                        </div>
+                        ${escapeHtml(dialogue)}
                     </div>
                 `;
             }
@@ -940,7 +988,10 @@ function displayScript(scriptText){
             if(camera){
 
                 html += `
-                    <div style="margin-bottom:12px;">
+                    <div style="
+                        margin-bottom:14px;
+                        line-height:1.6;
+                    ">
                         <b>📷 Góc máy:</b><br>
                         ${escapeHtml(camera)}
                     </div>
@@ -948,9 +999,9 @@ function displayScript(scriptText){
             }
 
 
-            /*
-             * PROMPT ẢNH
-             */
+            // ==============================
+            // PROMPT ẢNH
+            // ==============================
 
             if(imagePrompt){
 
@@ -959,20 +1010,23 @@ function displayScript(scriptText){
 
                         <div style="
                             font-weight:700;
-                            margin-bottom:6px;
+                            margin-bottom:7px;
                         ">
                             🖼️ PROMPT TẠO ẢNH
                         </div>
 
-                        <div style="
-                            background:#111827;
-                            color:#f9fafb;
-                            padding:14px;
-                            border-radius:10px;
-                            font-size:13px;
-                            line-height:1.6;
-                            white-space:pre-wrap;
-                        " id="${sceneId}_image">
+                        <div
+                            id="${sceneId}_image"
+                            style="
+                                background:#111827;
+                                color:#f9fafb;
+                                padding:14px;
+                                border-radius:10px;
+                                font-size:13px;
+                                line-height:1.65;
+                                white-space:pre-wrap;
+                            "
+                        >
                             ${escapeHtml(imagePrompt)}
                         </div>
 
@@ -981,7 +1035,7 @@ function displayScript(scriptText){
                             onclick="copyPrompt('${sceneId}_image')"
                             style="
                                 margin-top:7px;
-                                padding:8px 13px;
+                                padding:9px 14px;
                                 border:0;
                                 border-radius:8px;
                                 background:#7c3aed;
@@ -998,9 +1052,9 @@ function displayScript(scriptText){
             }
 
 
-            /*
-             * PROMPT VIDEO
-             */
+            // ==============================
+            // PROMPT VIDEO
+            // ==============================
 
             if(videoPrompt){
 
@@ -1009,20 +1063,23 @@ function displayScript(scriptText){
 
                         <div style="
                             font-weight:700;
-                            margin-bottom:6px;
+                            margin-bottom:7px;
                         ">
                             🎥 PROMPT TẠO VIDEO
                         </div>
 
-                        <div style="
-                            background:#111827;
-                            color:#f9fafb;
-                            padding:14px;
-                            border-radius:10px;
-                            font-size:13px;
-                            line-height:1.6;
-                            white-space:pre-wrap;
-                        " id="${sceneId}_video">
+                        <div
+                            id="${sceneId}_video"
+                            style="
+                                background:#111827;
+                                color:#f9fafb;
+                                padding:14px;
+                                border-radius:10px;
+                                font-size:13px;
+                                line-height:1.65;
+                                white-space:pre-wrap;
+                            "
+                        >
                             ${escapeHtml(videoPrompt)}
                         </div>
 
@@ -1031,7 +1088,7 @@ function displayScript(scriptText){
                             onclick="copyPrompt('${sceneId}_video')"
                             style="
                                 margin-top:7px;
-                                padding:8px 13px;
+                                padding:9px 14px;
                                 border:0;
                                 border-radius:8px;
                                 background:#ec4899;
@@ -1056,15 +1113,18 @@ function displayScript(scriptText){
     }
 
 
+    // ==============================
+    // HIỂN THỊ
+    // ==============================
+
     box.innerHTML = html;
+
 }
 
 
-/*
- * =========================
- * COPY PROMPT
- * =========================
- */
+/* ==============================
+   COPY PROMPT
+================================ */
 
 function copyPrompt(elementId){
 
@@ -1072,23 +1132,36 @@ function copyPrompt(elementId){
         document.getElementById(elementId);
 
     if(!element){
+
+        alert("Không tìm thấy prompt.");
+
         return;
     }
 
     const text =
-        element.innerText || element.textContent || "";
+        element.innerText ||
+        element.textContent ||
+        "";
 
-    navigator.clipboard.writeText(text)
-        .then(function(){
+    if(navigator.clipboard){
 
-            alert("✅ Prompt đã được copy!");
+        navigator.clipboard.writeText(text)
+            .then(function(){
 
-        })
-        .catch(function(){
+                alert("✅ Đã copy prompt!");
 
-            alert("Không thể copy tự động. Chị hãy bôi đen prompt và copy.");
+            })
+            .catch(function(){
 
-        });
+                alert("⚠️ Không thể copy tự động.");
+
+            });
+
+    }else{
+
+        alert("⚠️ Trình duyệt không hỗ trợ copy tự động.");
+
+    }
 }
 
 
