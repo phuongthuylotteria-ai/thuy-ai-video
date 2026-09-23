@@ -516,11 +516,58 @@ function displayScript(scriptText){
 
     let content = scriptText;
 
-    if(typeof scriptText === "object"){
+    // Nếu API trả về object
+    if(typeof content === "object" && content !== null){
+
+        // Ưu tiên lấy phần result
+        if(typeof content.result === "string"){
+            content = content.result;
+        }
+        else if(typeof content.script === "string"){
+            content = content.script;
+        }
+        else{
+            try{
+                content = JSON.stringify(content, null, 2);
+            }
+            catch(error){
+                content = String(content);
+            }
+        }
+    }
+
+    // Nếu kết quả vẫn là chuỗi JSON thì bóc JSON
+    if(typeof content === "string"){
+
+        content = content.trim();
+
+        // Bỏ ```json và ```
+        content = content
+            .replace(/^```json\s*/i, "")
+            .replace(/^```\s*/i, "")
+            .replace(/\s*```$/i, "")
+            .trim();
+
+        // Thử parse JSON
         try{
-            content = JSON.stringify(scriptText, null, 2);
-        }catch(error){
-            content = String(scriptText);
+
+            const parsed = JSON.parse(content);
+
+            // Nếu JSON có result
+            if(
+                parsed &&
+                typeof parsed === "object" &&
+                typeof parsed.result === "string"
+            ){
+                content = parsed.result;
+            }
+            else{
+                content = JSON.stringify(parsed, null, 2);
+            }
+
+        }
+        catch(error){
+            // Không phải JSON thì giữ nguyên
         }
     }
 
@@ -530,44 +577,13 @@ function displayScript(scriptText){
             style="
                 white-space:pre-wrap;
                 line-height:1.7;
+                font-size:15px;
             "
         >
             ${escapeHtml(content)}
         </div>
     `;
 }
-Sau đó cấu trúc cuối file phải giống thế này:
-function displayScript(scriptText){
-
-    const box = document.getElementById("scriptContent");
-
-    if(!box){
-        return;
-    }
-
-    let content = scriptText;
-
-    if(typeof scriptText === "object"){
-        try{
-            content = JSON.stringify(scriptText, null, 2);
-        }catch(error){
-            content = String(scriptText);
-        }
-    }
-
-    box.innerHTML = `
-        <div
-            class="scene-content"
-            style="
-                white-space:pre-wrap;
-                line-height:1.7;
-            "
-        >
-            ${escapeHtml(content)}
-        </div>
-    `;
-}
-
 
 function escapeHtml(text){
     ...
