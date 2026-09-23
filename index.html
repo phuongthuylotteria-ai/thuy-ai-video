@@ -405,16 +405,18 @@ async function generateScript(){
 
         const response = await fetch(API_URL,{
             method:"POST",
+
             headers:{
                 "Content-Type":"application/json"
             },
+
             body:JSON.stringify({
-                topic,
-                duration,
-                style,
-                audience,
-                voice,
-                extra
+                topic: topic,
+                duration: duration,
+                style: style,
+                audience: audience,
+                voice: voice,
+                extra: extra
             })
         });
 
@@ -425,22 +427,60 @@ async function generateScript(){
             let message = "Không thể tạo kịch bản.";
 
             if(data && data.error){
+
                 if(typeof data.error === "string"){
+
                     message = data.error;
+
                 }else if(data.error.message){
+
                     message = data.error.message;
+
                 }else{
-                    message = JSON.stringify(data.error);
+
+                    message =
+                        JSON.stringify(data.error, null, 2);
                 }
             }
 
             throw new Error(message);
         }
 
-        const scriptText =
-            typeof data.script === "string"
-                ? data.script
-                : JSON.stringify(data.script, null, 2);
+        /*
+         * Worker hiện tại trả về:
+         *
+         * {
+         *   success: true,
+         *   script: "Nội dung kịch bản..."
+         * }
+         *
+         * Vì vậy phải lấy data.script.
+         */
+
+        let scriptText = "";
+
+        if(typeof data.script === "string"){
+
+            scriptText = data.script;
+
+        }else if(data.script){
+
+            scriptText =
+                JSON.stringify(
+                    data.script,
+                    null,
+                    2
+                );
+
+        }else{
+
+            scriptText =
+                JSON.stringify(
+                    data,
+                    null,
+                    2
+                );
+        }
 
         displayScript(scriptText);
 
@@ -460,10 +500,11 @@ async function generateScript(){
     }finally{
 
         button.disabled = false;
-        loading.style.display = "none";
 
+        loading.style.display = "none";
     }
 }
+
 
 function displayScript(scriptText){
 
@@ -471,16 +512,26 @@ function displayScript(scriptText){
         document.getElementById("scriptContent");
 
     box.innerHTML = `
-        <div class="scene-content"
-             style="white-space:pre-wrap; line-height:1.7;">
+        <div
+            class="scene-content"
+            style="
+                white-space:pre-wrap;
+                line-height:1.7;
+            "
+        >
             ${escapeHtml(scriptText)}
         </div>
     `;
 }
 
+
 function escapeHtml(text){
 
-    if(text === undefined || text === null){
+    if(
+        text === undefined ||
+        text === null
+    ){
+
         return "";
     }
 
