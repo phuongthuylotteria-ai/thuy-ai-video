@@ -1,27 +1,629 @@
 <!DOCTYPE html>
 <html lang="vi">
 <head>
-  <meta charset="UTF-8">
-  <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  <title>Tool tạo video AI</title>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+
+<title>THỦY AI VIDEO</title>
+
+<style>
+*{
+    box-sizing:border-box;
+}
+
+body{
+    margin:0;
+    font-family:Arial,Helvetica,sans-serif;
+    background:#f5f6fa;
+    color:#222;
+}
+
+.container{
+    max-width:1100px;
+    margin:0 auto;
+    padding:30px 18px 60px;
+}
+
+.header{
+    background:linear-gradient(135deg,#7c3aed,#ec4899);
+    color:white;
+    padding:30px;
+    border-radius:22px;
+    margin-bottom:25px;
+    box-shadow:0 10px 30px rgba(0,0,0,.12);
+}
+
+.header h1{
+    margin:0 0 8px;
+    font-size:32px;
+}
+
+.header p{
+    margin:0;
+    opacity:.92;
+}
+
+.card{
+    background:white;
+    border-radius:18px;
+    padding:24px;
+    margin-bottom:20px;
+    box-shadow:0 5px 20px rgba(0,0,0,.07);
+}
+
+.card h2{
+    margin-top:0;
+    font-size:21px;
+}
+
+.grid{
+    display:grid;
+    grid-template-columns:1fr 1fr;
+    gap:18px;
+}
+
+.field{
+    display:flex;
+    flex-direction:column;
+    gap:7px;
+}
+
+.field.full{
+    grid-column:1/-1;
+}
+
+label{
+    font-weight:600;
+}
+
+input,
+select,
+textarea{
+    width:100%;
+    border:1px solid #ddd;
+    border-radius:10px;
+    padding:13px;
+    font-size:15px;
+    outline:none;
+}
+
+textarea{
+    min-height:110px;
+    resize:vertical;
+}
+
+input:focus,
+select:focus,
+textarea:focus{
+    border-color:#8b5cf6;
+    box-shadow:0 0 0 3px rgba(139,92,246,.1);
+}
+
+.button{
+    width:100%;
+    border:0;
+    border-radius:12px;
+    padding:15px;
+    font-size:16px;
+    font-weight:700;
+    cursor:pointer;
+    background:linear-gradient(135deg,#7c3aed,#ec4899);
+    color:white;
+}
+
+.button:hover{
+    opacity:.93;
+}
+
+.button:disabled{
+    opacity:.55;
+    cursor:not-allowed;
+}
+
+.status{
+    margin-top:15px;
+    padding:12px;
+    border-radius:10px;
+    background:#f3f4f6;
+    display:none;
+}
+
+.script{
+    display:none;
+}
+
+.script-title{
+    font-size:25px;
+    font-weight:800;
+    margin-bottom:15px;
+}
+
+.hook{
+    background:#fff7ed;
+    border-left:5px solid #f97316;
+    padding:15px;
+    border-radius:10px;
+    margin-bottom:18px;
+}
+
+.scene{
+    border:1px solid #e5e7eb;
+    border-radius:15px;
+    padding:20px;
+    margin-bottom:18px;
+    background:#fafafa;
+}
+
+.scene-head{
+    display:flex;
+    justify-content:space-between;
+    align-items:center;
+    margin-bottom:15px;
+}
+
+.scene-number{
+    font-size:18px;
+    font-weight:800;
+}
+
+.badge{
+    background:#ede9fe;
+    color:#6d28d9;
+    padding:6px 10px;
+    border-radius:20px;
+    font-size:13px;
+    font-weight:700;
+}
+
+.scene-row{
+    margin-bottom:13px;
+}
+
+.scene-label{
+    font-weight:700;
+    margin-bottom:5px;
+}
+
+.scene-content{
+    background:white;
+    padding:12px;
+    border-radius:9px;
+    border:1px solid #eee;
+    line-height:1.55;
+}
+
+.loading{
+    text-align:center;
+    padding:20px;
+}
+
+.spinner{
+    width:35px;
+    height:35px;
+    border:4px solid #ddd;
+    border-top-color:#7c3aed;
+    border-radius:50%;
+    animation:spin 1s linear infinite;
+    margin:0 auto 10px;
+}
+
+@keyframes spin{
+    to{
+        transform:rotate(360deg);
+    }
+}
+
+@media(max-width:700px){
+    .grid{
+        grid-template-columns:1fr;
+    }
+
+    .field.full{
+        grid-column:auto;
+    }
+
+    .header h1{
+        font-size:25px;
+    }
+}
+</style>
 </head>
 
 <body>
-  <h1>🎬 Tool tạo video AI</h1>
-  <p>Biến ảnh thành video bằng AI</p>
 
-  <input type="file" accept="image/*">
+<div class="container">
 
-  <br><br>
+    <div class="header">
+        <h1>🎬 THỦY AI VIDEO</h1>
+        <p>Từ một ý tưởng → AI tự viết kịch bản → chia cảnh → tạo prompt video chuyên nghiệp.</p>
+    </div>
 
-  <textarea
-    placeholder="Nhập prompt mô tả chuyển động..."
-    rows="6"
-    cols="50"
-  ></textarea>
+    <div class="card">
 
-  <br><br>
+        <h2>✨ Tạo kịch bản tự động</h2>
 
-  <button>Tạo video AI</button>
+        <div class="grid">
+
+            <div class="field full">
+                <label>Chủ đề / Sản phẩm</label>
+
+                <input
+                    id="topic"
+                    placeholder="Ví dụ: Kem chống nắng ADA, món ăn dưỡng nhan, câu chuyện Spa..."
+                >
+            </div>
+
+            <div class="field">
+                <label>Thời lượng video</label>
+
+                <select id="duration">
+                    <option value="15 giây">15 giây</option>
+                    <option value="30 giây" selected>30 giây</option>
+                    <option value="45 giây">45 giây</option>
+                    <option value="60 giây">60 giây</option>
+                    <option value="90 giây">90 giây</option>
+                </select>
+            </div>
+
+            <div class="field">
+                <label>Phong cách video</label>
+
+                <select id="style">
+                    <option value="TikTok bán hàng">TikTok bán hàng</option>
+                    <option value="Vlog đời thường">Vlog đời thường</option>
+                    <option value="Review sản phẩm">Review sản phẩm</option>
+                    <option value="Câu chuyện hài hước">Câu chuyện hài hước</option>
+                    <option value="Luxury cinematic">Luxury cinematic</option>
+                    <option value="Chuyên gia tư vấn">Chuyên gia tư vấn</option>
+                </select>
+            </div>
+
+            <div class="field">
+                <label>Đối tượng người xem</label>
+
+                <input
+                    id="audience"
+                    value="Phụ nữ Việt Nam 25-50 tuổi"
+                    placeholder="Ví dụ: phụ nữ 30-50 tuổi"
+                >
+            </div>
+
+            <div class="field">
+                <label>Giọng video</label>
+
+                <select id="voice">
+                    <option value="Nữ Việt Nam, nhẹ nhàng, tự nhiên, chuyên nghiệp">
+                        Nữ Việt Nam - nhẹ nhàng
+                    </option>
+
+                    <option value="Nữ Việt Nam, trẻ trung, năng lượng">
+                        Nữ Việt Nam - trẻ trung
+                    </option>
+
+                    <option value="Nữ Việt Nam, sang trọng, chậm rãi">
+                        Nữ Việt Nam - sang trọng
+                    </option>
+
+                    <option value="Nữ Việt Nam, thân thiện, gần gũi">
+                        Nữ Việt Nam - thân thiện
+                    </option>
+                </select>
+            </div>
+
+            <div class="field full">
+                <label>Yêu cầu thêm</label>
+
+                <textarea
+                    id="extra"
+                    placeholder="Ví dụ: Không nói quá lố, không phóng đại công dụng, có CTA cuối video..."
+                ></textarea>
+            </div>
+
+        </div>
+
+        <br>
+
+        <button
+            class="button"
+            id="generateBtn"
+            onclick="generateScript()"
+        >
+            ✨ AI TỰ VIẾT KỊCH BẢN
+        </button>
+
+        <div id="status" class="status"></div>
+
+    </div>
+
+
+    <div id="loading" class="card loading" style="display:none">
+
+        <div class="spinner"></div>
+
+        <strong>AI đang xây dựng kịch bản...</strong>
+
+        <p>Đang phân tích chủ đề và chia thành các cảnh video.</p>
+
+    </div>
+
+
+    <div id="scriptBox" class="card script">
+
+        <h2>🎬 Kịch bản hoàn chỉnh</h2>
+
+        <div id="scriptContent"></div>
+
+    </div>
+
+</div>
+
+
+<script>
+
+const API_URL =
+    "https://YOUR-VERCEL-APP.vercel.app/api/generate-script";
+
+
+async function generateScript(){
+
+    const topic =
+        document.getElementById("topic").value.trim();
+
+    const duration =
+        document.getElementById("duration").value;
+
+    const style =
+        document.getElementById("style").value;
+
+    const audience =
+        document.getElementById("audience").value.trim();
+
+    const voice =
+        document.getElementById("voice").value;
+
+    const extra =
+        document.getElementById("extra").value.trim();
+
+
+    if(!topic){
+
+        alert("Bạn hãy nhập chủ đề hoặc sản phẩm trước nhé.");
+
+        return;
+    }
+
+
+    const button =
+        document.getElementById("generateBtn");
+
+    const loading =
+        document.getElementById("loading");
+
+    const scriptBox =
+        document.getElementById("scriptBox");
+
+
+    button.disabled = true;
+
+    loading.style.display = "block";
+
+    scriptBox.style.display = "none";
+
+
+    try{
+
+        const response = await fetch(API_URL,{
+
+            method:"POST",
+
+            headers:{
+                "Content-Type":"application/json"
+            },
+
+            body:JSON.stringify({
+
+                topic,
+                duration,
+                style,
+                audience,
+                voice,
+                extra
+
+            })
+
+        });
+
+
+        const data = await response.json();
+
+
+        if(!response.ok){
+
+            throw new Error(
+                data.error || "Không thể tạo kịch bản."
+            );
+
+        }
+
+
+        displayScript(data);
+
+
+        scriptBox.style.display = "block";
+
+        scriptBox.scrollIntoView({
+            behavior:"smooth"
+        });
+
+
+    }catch(error){
+
+        alert(
+            "Có lỗi khi tạo kịch bản:\n\n" +
+            error.message
+        );
+
+    }finally{
+
+        button.disabled = false;
+
+        loading.style.display = "none";
+
+    }
+
+}
+
+
+function displayScript(data){
+
+    const box =
+        document.getElementById("scriptContent");
+
+
+    let html = "";
+
+
+    html += `
+        <div class="script-title">
+            ${escapeHtml(data.title)}
+        </div>
+    `;
+
+
+    html += `
+        <div class="hook">
+            <strong>🎯 HOOK:</strong><br>
+            ${escapeHtml(data.hook)}
+        </div>
+    `;
+
+
+    if(data.scenes && data.scenes.length){
+
+        data.scenes.forEach((scene,index)=>{
+
+            html += `
+
+                <div class="scene">
+
+                    <div class="scene-head">
+
+                        <div class="scene-number">
+                            Cảnh ${index+1}
+                        </div>
+
+                        <div class="badge">
+                            ${escapeHtml(scene.duration)}
+                        </div>
+
+                    </div>
+
+
+                    <div class="scene-row">
+
+                        <div class="scene-label">
+                            🎙️ Lời thoại
+                        </div>
+
+                        <div class="scene-content">
+                            ${escapeHtml(scene.dialogue)}
+                        </div>
+
+                    </div>
+
+
+                    <div class="scene-row">
+
+                        <div class="scene-label">
+                            🖼️ Prompt hình ảnh
+                        </div>
+
+                        <div class="scene-content">
+                            ${escapeHtml(scene.image_prompt)}
+                        </div>
+
+                    </div>
+
+
+                    <div class="scene-row">
+
+                        <div class="scene-label">
+                            🎥 Prompt chuyển động
+                        </div>
+
+                        <div class="scene-content">
+                            ${escapeHtml(scene.video_prompt)}
+                        </div>
+
+                    </div>
+
+
+                    <div class="scene-row">
+
+                        <div class="scene-label">
+                            🎙️ Giọng đọc
+                        </div>
+
+                        <div class="scene-content">
+                            ${escapeHtml(scene.voice_direction)}
+                        </div>
+
+                    </div>
+
+                </div>
+
+            `;
+
+        });
+
+    }
+
+
+    if(data.cta){
+
+        html += `
+
+            <div class="hook">
+
+                <strong>📢 CTA CUỐI VIDEO</strong>
+
+                <br><br>
+
+                ${escapeHtml(data.cta)}
+
+            </div>
+
+        `;
+
+    }
+
+
+    box.innerHTML = html;
+
+}
+
+
+function escapeHtml(text){
+
+    if(text === undefined || text === null){
+        return "";
+    }
+
+    return String(text)
+
+        .replace(/&/g,"&amp;")
+
+        .replace(/</g,"&lt;")
+
+        .replace(/>/g,"&gt;")
+
+        .replace(/"/g,"&quot;")
+
+        .replace(/'/g,"&#039;");
+
+}
+
+</script>
+
 </body>
 </html>
