@@ -544,6 +544,188 @@ function escapeHtml(text){
 }
 
 </script>
+<!-- ============================= -->
+<!-- PHƯƠNG THÙY AI VIDEO STUDIO -->
+<!-- BƯỚC 1: ONE-CLICK VIDEO -->
+<!-- ============================= -->
 
+<div id="autoVideoStudio" style="
+    max-width: 900px;
+    margin: 30px auto;
+    padding: 24px;
+    background: #ffffff;
+    border-radius: 18px;
+    box-shadow: 0 8px 30px rgba(0,0,0,0.08);
+    font-family: Arial, sans-serif;
+">
+
+    <h2 style="
+        margin: 0 0 8px;
+        color: #7c3aed;
+        font-size: 24px;
+    ">
+        🚀 PHƯƠNG THÙY AI VIDEO STUDIO
+    </h2>
+
+    <p style="
+        margin: 0 0 20px;
+        color: #666;
+        line-height: 1.6;
+    ">
+        Chỉ cần nói cho AI biết chị muốn làm video gì.
+        Hệ thống sẽ từng bước tự xây dựng video hoàn chỉnh.
+    </p>
+
+    <label style="
+        display:block;
+        margin-bottom:8px;
+        font-weight:bold;
+    ">
+        🎯 Chị muốn tạo video gì?
+    </label>
+
+    <textarea
+        id="autoVideoRequest"
+        rows="6"
+        placeholder="Ví dụ: Tạo video TikTok 45 giây về 3 món ăn dưỡng nhan cho phụ nữ 30-50 tuổi, phong cách sang trọng, tự nhiên, có nhân vật nữ Việt Nam, nói chuyện trực tiếp với camera..."
+        style="
+            width:100%;
+            box-sizing:border-box;
+            padding:14px;
+            border:1px solid #ddd;
+            border-radius:12px;
+            resize:vertical;
+            font-size:15px;
+            line-height:1.6;
+            outline:none;
+        "
+    ></textarea>
+
+    <div style="
+        display:grid;
+        grid-template-columns:repeat(3,1fr);
+        gap:12px;
+        margin-top:15px;
+    ">
+
+        <div style="
+            padding:14px;
+            background:#faf7ff;
+            border-radius:12px;
+        ">
+            <div style="font-weight:bold;">👤 Nhân vật</div>
+            <div id="characterStatus" style="
+                margin-top:6px;
+                color:#777;
+            ">
+                Chưa thiết lập
+            </div>
+        </div>
+
+        <div style="
+            padding:14px;
+            background:#faf7ff;
+            border-radius:12px;
+        ">
+            <div style="font-weight:bold;">🎙️ Giọng nói</div>
+            <div id="voiceStatus" style="
+                margin-top:6px;
+                color:#777;
+            ">
+                Chưa thiết lập
+            </div>
+        </div>
+
+        <div style="
+            padding:14px;
+            background:#faf7ff;
+            border-radius:12px;
+        ">
+            <div style="font-weight:bold;">📱 Tỷ lệ video</div>
+            <div style="
+                margin-top:6px;
+                color:#777;
+            ">
+                9:16
+            </div>
+        </div>
+
+    </div>
+
+    <button
+        id="autoVideoButton"
+        type="button"
+        style="
+            width:100%;
+            margin-top:20px;
+            padding:16px;
+            border:0;
+            border-radius:12px;
+            background:linear-gradient(90deg,#7c3aed,#ec4899);
+            color:#fff;
+            font-size:17px;
+            font-weight:bold;
+            cursor:pointer;
+        "
+    >
+        🚀 TẠO VIDEO TỰ ĐỘNG
+    </button>
+
+    <div
+        id="autoVideoStatus"
+        style="
+            display:none;
+            margin-top:18px;
+            padding:15px;
+            border-radius:12px;
+            background:#f8f8f8;
+            color:#555;
+            line-height:1.6;
+        "
+    ></div>
+
+</div>
+
+<script>
+(function () {
+
+    const button = document.getElementById("autoVideoButton");
+    const requestBox = document.getElementById("autoVideoRequest");
+    const statusBox = document.getElementById("autoVideoStatus");
+
+    if (!button || !requestBox || !statusBox) {
+        return;
+    }
+
+    button.addEventListener("click", function () {
+
+        const request = requestBox.value.trim();
+
+        if (!request) {
+            alert("Chị hãy nhập mong muốn tạo video trước nhé.");
+            requestBox.focus();
+            return;
+        }
+
+        statusBox.style.display = "block";
+
+        statusBox.innerHTML =
+            "🧠 Đã nhận yêu cầu của chị.<br><br>" +
+            "⏳ Đây mới là bước giao diện thử nghiệm.<br>" +
+            "Các module AI tạo kịch bản, chia cảnh, nhân vật, giọng nói, video và dựng phim sẽ được kết nối ở các bước tiếp theo.";
+
+        button.disabled = true;
+        button.style.opacity = "0.7";
+
+        setTimeout(function () {
+            button.disabled = false;
+            button.style.opacity = "1";
+        }, 1500);
+
+    });
+
+})();
+</script>
+    
 </body>
 </html>
