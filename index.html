@@ -248,7 +248,7 @@ textarea{
 
 
   <!-- ========================= -->
-  <!-- KHU VỰC TẠO KỊCH BẢN -->
+  <!-- AI TẠO KỊCH BẢN -->
   <!-- ========================= -->
 
   <div class="card">
@@ -364,7 +364,9 @@ textarea{
       class="button"
       id="scriptBtn"
     >
+
       ✨ AI TỰ VIẾT KỊCH BẢN
+
     </button>
 
 
@@ -422,7 +424,7 @@ textarea{
 
 
   <!-- ========================= -->
-  <!-- KỊCH BẢN -->
+  <!-- KỊCH BẢN HOÀN CHỈNH -->
   <!-- ========================= -->
 
   <div
@@ -440,7 +442,9 @@ textarea{
       class="button green"
       id="allBtn"
     >
+
       🚀 TẠO TẤT CẢ CẢNH VIDEO
+
     </button>
 
 
@@ -465,18 +469,31 @@ textarea{
 
 
 /*
-  APPS SCRIPT
-  Dùng riêng cho việc tạo kịch bản Gemini
-*/
+ * GOOGLE APPS SCRIPT
+ *
+ * Dùng cho:
+ * GitHub Pages
+ *    ↓
+ * JSONP
+ *    ↓
+ * Apps Script
+ *    ↓
+ * Gemini
+ */
 
 const SCRIPT_API_URL =
   'https://script.google.com/macros/s/AKfycbzpIjAWninGb2hXQHezLSvRfd2G8TBFb8FRCjQkIjm-5Buyfbw6HjgTCl2sN9Stou2M/exec';
 
 
+
 /*
-  CLOUDFLARE WORKER
-  Giữ lại cho phần tạo video Veo
-*/
+ * CLOUDFLARE WORKER
+ *
+ * Vẫn giữ cho:
+ * - Veo
+ * - video-status
+ * - video
+ */
 
 const API_URL =
   'https://phuong-thuy-ai-video.phuongthuy-lotteria.workers.dev';
@@ -484,7 +501,7 @@ const API_URL =
 
 
 /* =====================================================
-   BIẾN HỆ THỐNG
+   BIẾN
    ===================================================== */
 
 let currentScript = null;
@@ -498,13 +515,17 @@ let sceneOperations = {};
 
 
 /* =====================================================
-   HÀM TIỆN ÍCH
+   HÀM LẤY ELEMENT
    ===================================================== */
 
 const $ = id =>
   document.getElementById(id);
 
 
+
+/* =====================================================
+   STATUS
+   ===================================================== */
 
 function status(
   el,
@@ -522,30 +543,58 @@ function status(
 
 
 
+/* =====================================================
+   ESCAPE HTML
+   ===================================================== */
+
 function esc(v){
 
   return String(v ?? '')
+
     .replace(/&/g,'&amp;')
+
     .replace(/</g,'&lt;')
+
     .replace(/>/g,'&gt;')
+
     .replace(/"/g,'&quot;')
+
     .replace(/'/g,'&#039;');
 
 }
 
 
 
+/* =====================================================
+   PARSE GEMINI JSON
+   ===================================================== */
+
 function parseResult(v){
 
-  if(typeof v==='object'){
+  if(
+    typeof v === 'object'
+  ){
+
     return v;
+
   }
 
-  let s=String(v||'')
-    .trim()
-    .replace(/^```json\s*/i,'')
-    .replace(/^```\s*/i,'')
-    .replace(/\s*```$/i,'');
+
+  let s =
+    String(v || '')
+      .trim()
+      .replace(
+        /^```json\s*/i,
+        ''
+      )
+      .replace(
+        /^```\s*/i,
+        ''
+      )
+      .replace(
+        /\s*```$/i,
+        ''
+      );
 
 
   try{
@@ -555,12 +604,18 @@ function parseResult(v){
   }catch(e){
 
 
-    const a=s.indexOf('{');
+    const a =
+      s.indexOf('{');
 
-    const b=s.lastIndexOf('}');
+
+    const b =
+      s.lastIndexOf('}');
 
 
-    if(a>=0 && b>a){
+    if(
+      a >= 0 &&
+      b > a
+    ){
 
       try{
 
@@ -581,20 +636,27 @@ function parseResult(v){
 
 
 
+/* =====================================================
+   THỜI LƯỢNG VIDEO
+   ===================================================== */
+
 function seconds(
   v,
   hasImage
 ){
 
   if(hasImage){
+
     return 8;
+
   }
 
 
-  let n=parseInt(
-    String(v||''),
-    10
-  );
+  let n =
+    parseInt(
+      String(v || ''),
+      10
+    );
 
 
   return [4,6,8].includes(n)
@@ -605,13 +667,23 @@ function seconds(
 
 
 
+/* =====================================================
+   ẢNH NHÂN VẬT
+   ===================================================== */
+
 function imagePayload(){
 
   return imageData
+
     ? {
+
         image:imageData,
-        image_mime_type:imageMime
+
+        image_mime_type:
+          imageMime
+
       }
+
     : {};
 
 }
@@ -619,40 +691,48 @@ function imagePayload(){
 
 
 /* =====================================================
-   ẢNH NHÂN VẬT
+   CHỌN ẢNH
    ===================================================== */
 
 $('characterImage')
 .addEventListener(
   'change',
-  e=>{
+  e => {
 
-    const f=e.target.files?.[0];
+    const f =
+      e.target.files?.[0];
+
 
     if(!f){
+
       return;
+
     }
 
 
     imageMime =
-      f.type || 'image/jpeg';
+      f.type ||
+      'image/jpeg';
 
 
     const r =
       new FileReader();
 
 
-    r.onload=()=>{
+    r.onload = () => {
 
-      imageData=
-        String(r.result||'');
+      imageData =
+        String(
+          r.result || ''
+        );
 
 
-      $('previewImg').src=
+      $('previewImg').src =
         imageData;
 
 
-      $('preview').style.display=
+      $('preview')
+        .style.display =
         'block';
 
     };
@@ -678,14 +758,167 @@ $('scriptBtn')
 
 
 /* =====================================================
+   JSONP CALLBACK
+   ===================================================== */
+
+window.thuyGeminiCallback =
+  function(data){
+
+    if(
+      window.__thuyGeminiResolve
+    ){
+
+      window.__thuyGeminiResolve(
+        data
+      );
+
+      window.__thuyGeminiResolve =
+        null;
+
+      window.__thuyGeminiReject =
+        null;
+
+    }
+
+  };
+
+
+
+/* =====================================================
+   GỌI APPS SCRIPT BẰNG JSONP
+   ===================================================== */
+
+function callGeminiJSONP(params){
+
+  return new Promise(
+    function(resolve,reject){
+
+      const callbackName =
+        'thuyGeminiCallback';
+
+
+      window.__thuyGeminiResolve =
+        resolve;
+
+
+      window.__thuyGeminiReject =
+        reject;
+
+
+      const query =
+        new URLSearchParams({
+
+          callback:
+            callbackName,
+
+          topic:
+            params.topic,
+
+          duration:
+            params.duration,
+
+          style:
+            params.style,
+
+          audience:
+            params.audience,
+
+          voice:
+            params.voice,
+
+          extra:
+            params.extra
+
+        });
+
+
+      const script =
+        document.createElement(
+          'script'
+        );
+
+
+      script.src =
+        SCRIPT_API_URL +
+        '?' +
+        query.toString();
+
+
+      script.async =
+        true;
+
+
+      script.onerror =
+        function(){
+
+          window.__thuyGeminiResolve =
+            null;
+
+          window.__thuyGeminiReject =
+            null;
+
+
+          reject(
+            new Error(
+              'Không kết nối được tới Google Apps Script.'
+            )
+          );
+
+        };
+
+
+      document.body.appendChild(
+        script
+      );
+
+
+      /*
+       * Timeout 90 giây
+       */
+
+      setTimeout(
+        function(){
+
+          if(
+            window.__thuyGeminiResolve
+          ){
+
+            window.__thuyGeminiResolve =
+              null;
+
+            window.__thuyGeminiReject =
+              null;
+
+
+            reject(
+              new Error(
+                'Gemini phản hồi quá lâu. Hãy thử lại.'
+              )
+            );
+
+          }
+
+        },
+        90000
+      );
+
+    }
+  );
+
+}
+
+
+
+/* =====================================================
    TẠO KỊCH BẢN
-   APPS SCRIPT → GEMINI
    ===================================================== */
 
 async function generateScript(){
 
   const topic =
-    $('topic').value.trim();
+    $('topic')
+      .value
+      .trim();
 
 
   if(!topic){
@@ -703,11 +936,13 @@ async function generateScript(){
     $('scriptBtn');
 
 
-  btn.disabled=true;
+  btn.disabled =
+    true;
 
 
   status(
     $('scriptStatus'),
+
     '⏳ AI đang viết kịch bản bằng Gemini...'
   );
 
@@ -715,48 +950,34 @@ async function generateScript(){
   try{
 
 
-    const r =
-      await fetch(
-        SCRIPT_API_URL,
-        {
-
-          method:'POST',
-
-          headers:{
-            'Content-Type':
-              'application/json'
-          },
-
-          body:JSON.stringify({
-
-            topic:topic,
-
-            duration:
-              $('duration').value,
-
-            style:
-              $('style').value,
-
-            audience:
-              $('audience').value,
-
-            voice:
-              $('voice').value,
-
-            extra:
-              $('extra').value
-
-          })
-
-        }
-      );
-
-
     const d =
-      await r.json();
+      await callGeminiJSONP({
+
+        topic:
+          topic,
+
+        duration:
+          $('duration').value,
+
+        style:
+          $('style').value,
+
+        audience:
+          $('audience').value,
+
+        voice:
+          $('voice').value,
+
+        extra:
+          $('extra').value
+
+      });
 
 
-    if(!r.ok || !d.ok){
+    if(
+      !d ||
+      !d.ok
+    ){
 
       throw new Error(
         formatError(d)
@@ -766,12 +987,16 @@ async function generateScript(){
 
 
     const parsed =
-      parseResult(d.result);
+      parseResult(
+        d.result
+      );
 
 
     if(
       !parsed ||
-      !Array.isArray(parsed.scenes)
+      !Array.isArray(
+        parsed.scenes
+      )
     ){
 
       throw new Error(
@@ -791,6 +1016,7 @@ async function generateScript(){
 
 
     status(
+
       $('scriptStatus'),
 
       '✅ Đã tạo kịch bản và chia ' +
@@ -798,6 +1024,7 @@ async function generateScript(){
       ' cảnh.',
 
       'success'
+
     );
 
 
@@ -805,18 +1032,23 @@ async function generateScript(){
 
 
     status(
+
       $('scriptStatus'),
 
       '❌ ' +
-      esc(e.message),
+      esc(
+        e.message
+      ),
 
       'error'
+
     );
 
 
   }finally{
 
-    btn.disabled=false;
+    btn.disabled =
+      false;
 
   }
 
@@ -832,16 +1064,39 @@ function formatError(d){
 
   if(!d){
 
-    return 'Không nhận được phản hồi từ máy chủ.';
+    return (
+      'Không nhận được phản hồi từ máy chủ.'
+    );
+
+  }
+
+
+  if(
+    d.gemini_error &&
+    d.gemini_error.message
+  ){
+
+    return d.gemini_error.message;
 
   }
 
 
   return (
+
     d.gemini_message ||
+
     d.message ||
+
     d.error ||
-    ('HTTP '+(d.http_status||''))
+
+    (
+      'HTTP ' +
+      (
+        d.http_status ||
+        ''
+      )
+    )
+
   );
 
 }
@@ -855,180 +1110,216 @@ function formatError(d){
 function renderScript(s){
 
   $('scriptBox')
-    .style.display='block';
+    .style.display =
+    'block';
 
 
   const scenes =
     s.scenes || [];
 
 
-  $('scriptContent').innerHTML =
+  $('scriptContent')
+    .innerHTML =
 
-    '<div class="notice">' +
+      '<div class="notice">' +
 
-      '<b>' +
-      esc(
-        s.title || 'Kịch bản'
-      ) +
-      '</b>' +
+        '<b>' +
 
-      '<br>' +
+        esc(
+          s.title ||
+          'Kịch bản'
+        ) +
 
-      'Tổng thời lượng: ' +
+        '</b>' +
 
-      esc(
-        s.total_duration_seconds || ''
-      ) +
+        '<br>' +
 
-      ' giây' +
+        'Tổng thời lượng: ' +
 
-    '</div>' +
+        esc(
+          s.total_duration_seconds ||
+          ''
+        ) +
 
+        ' giây' +
 
-    scenes
-    .map(
-      (x,i)=>{
-
-
-        const prompt =
-          x.video_prompt ||
-          x.prompt_video ||
-          x.videoPrompt ||
-          x.visual_description ||
-          '';
+      '</div>' +
 
 
-        const dialogue =
-          x.dialogue ||
-          x.voiceover ||
-          '';
+      scenes
+        .map(
+          (x,i) => {
+
+            const prompt =
+
+              x.video_prompt ||
+
+              x.prompt_video ||
+
+              x.videoPrompt ||
+
+              x.visual_description ||
+
+              '';
 
 
-        return `
+            const dialogue =
 
-          <div
-            class="scene"
-            id="scene-${i}"
-          >
+              x.dialogue ||
 
-            <div class="scene-head">
+              x.voiceover ||
 
-              <div>
-
-                <b>
-                  🎬 Cảnh ${i+1}
-                </b>
-
-              </div>
+              '';
 
 
-              <span class="badge">
+            return `
 
-                ${esc(
-                  x.duration_seconds || 8
-                )}
-
-                giây
-
-              </span>
-
-            </div>
-
-
-            <div class="scene-row">
-
-              <div class="scene-label">
-                Hình ảnh
-              </div>
-
-              <div class="scene-content">
-
-                ${esc(
-                  x.visual_description ||
-                  x.image_prompt ||
-                  x.prompt_image ||
-                  ''
-                )}
-
-              </div>
-
-            </div>
-
-
-            <div class="scene-row">
-
-              <div class="scene-label">
-                Lời thoại
-              </div>
-
-              <div class="scene-content">
-
-                ${esc(dialogue)}
-
-              </div>
-
-            </div>
-
-
-            <div class="scene-row">
-
-              <div class="scene-label">
-                Prompt video
-              </div>
-
-              <div class="scene-content">
-
-                ${esc(prompt)}
-
-              </div>
-
-            </div>
-
-
-            <div class="scene-actions">
-
-              <button
-                class="button orange"
-                onclick="createScene(${i})"
+              <div
+                class="scene"
+                id="scene-${i}"
               >
 
-                🎬 TẠO CẢNH NÀY
+                <div class="scene-head">
 
-              </button>
+                  <div>
 
+                    <b>
+                      🎬 Cảnh ${i+1}
+                    </b>
 
-              <button
-                class="button"
-                onclick="copyPrompt(${i})"
-              >
-
-                📋 COPY PROMPT
-
-              </button>
-
-            </div>
+                  </div>
 
 
-            <div
-              id="result-${i}"
-            ></div>
+                  <span class="badge">
+
+                    ${esc(
+                      x.duration_seconds ||
+                      8
+                    )}
+
+                    giây
+
+                  </span>
+
+                </div>
 
 
-          </div>
+                <div class="scene-row">
 
-        `;
+                  <div class="scene-label">
+                    Hình ảnh
+                  </div>
 
-      }
-    )
-    .join('');
+
+                  <div class="scene-content">
+
+                    ${esc(
+
+                      x.visual_description ||
+
+                      x.image_prompt ||
+
+                      x.prompt_image ||
+
+                      ''
+
+                    )}
+
+                  </div>
+
+                </div>
+
+
+                <div class="scene-row">
+
+                  <div class="scene-label">
+                    Lời thoại
+                  </div>
+
+
+                  <div class="scene-content">
+
+                    ${esc(
+                      dialogue
+                    )}
+
+                  </div>
+
+                </div>
+
+
+                <div class="scene-row">
+
+                  <div class="scene-label">
+                    Prompt video
+                  </div>
+
+
+                  <div class="scene-content">
+
+                    ${esc(
+                      prompt
+                    )}
+
+                  </div>
+
+                </div>
+
+
+                <div class="scene-actions">
+
+
+                  <button
+
+                    class="button orange"
+
+                    onclick="createScene(${i})"
+
+                  >
+
+                    🎬 TẠO CẢNH NÀY
+
+                  </button>
+
+
+                  <button
+
+                    class="button"
+
+                    onclick="copyPrompt(${i})"
+
+                  >
+
+                    📋 COPY PROMPT
+
+                  </button>
+
+
+                </div>
+
+
+                <div
+                  id="result-${i}"
+                ></div>
+
+
+              </div>
+
+            `;
+
+          }
+        )
+        .join('');
 
 
   window.scrollTo({
 
     top:
-      $('scriptBox').offsetTop - 10,
+      $('scriptBox')
+        .offsetTop - 10,
 
-    behavior:'smooth'
+    behavior:
+      'smooth'
 
   });
 
@@ -1043,24 +1334,36 @@ function renderScript(s){
 function copyPrompt(i){
 
   const x =
-    currentScript.scenes[i];
+    currentScript
+      .scenes[i];
 
 
   const p =
+
     x.video_prompt ||
+
     x.prompt_video ||
+
     x.videoPrompt ||
+
     x.visual_description ||
+
     '';
 
 
-  navigator.clipboard?.writeText(p);
+  navigator.clipboard?.writeText(
+    p
+  );
 
 
   status(
+
     $('result-'+i),
+
     '📋 Đã copy prompt.',
+
     'success'
+
   );
 
 }
@@ -1069,18 +1372,21 @@ function copyPrompt(i){
 
 /* =====================================================
    TẠO 1 CẢNH VIDEO
-   CLOUDFLARE → VEO
    ===================================================== */
 
 window.createScene =
 async function(i){
 
   const scene =
-    currentScript?.scenes?.[i];
+    currentScript
+      ?.scenes
+      ?. [i];
 
 
   if(!scene){
+
     return;
+
   }
 
 
@@ -1089,10 +1395,15 @@ async function(i){
 
 
   const p =
+
     scene.video_prompt ||
+
     scene.prompt_video ||
+
     scene.videoPrompt ||
+
     scene.visual_description ||
+
     '';
 
 
@@ -1108,9 +1419,13 @@ async function(i){
     '<div class="status" style="display:block">' +
 
       '⏳ Đang gửi cảnh ' +
+
       (i+1) +
+
       ' cho Veo... (' +
+
       duration +
+
       ' giây)' +
 
     '</div>';
@@ -1119,15 +1434,19 @@ async function(i){
   try{
 
 
-    const payload={
+    const payload = {
 
-      prompt:p,
+      prompt:
+        p,
 
-      prompt_video:p,
+      prompt_video:
+        p,
 
-      aspect_ratio:'9:16',
+      aspect_ratio:
+        '9:16',
 
-      duration_seconds:duration,
+      duration_seconds:
+        duration,
 
       ...imagePayload()
 
@@ -1136,20 +1455,29 @@ async function(i){
 
     const r =
       await fetch(
-        API_URL+'/generate-video',
+
+        API_URL +
+        '/generate-video',
+
         {
 
-          method:'POST',
+          method:
+            'POST',
 
-          headers:{
+          headers: {
+
             'Content-Type':
               'application/json'
+
           },
 
           body:
-            JSON.stringify(payload)
+            JSON.stringify(
+              payload
+            )
 
         }
+
       );
 
 
@@ -1163,21 +1491,31 @@ async function(i){
     ){
 
       throw new Error(
+
         formatError(d) +
+
         ' ' +
+
         (
-          d.details?.error?.message ||
+          d.details
+            ?.error
+            ?.message ||
           ''
         )
+
       );
 
     }
 
 
     const op =
+
       d.operation_name ||
+
       d.operationName ||
+
       d.operation ||
+
       '';
 
 
@@ -1190,7 +1528,8 @@ async function(i){
     }
 
 
-    sceneOperations[i]=op;
+    sceneOperations[i] =
+      op;
 
 
     await pollVideo(
@@ -1201,12 +1540,16 @@ async function(i){
 
   }catch(e){
 
+
     result.innerHTML =
 
       '<div class="status error" style="display:block">' +
 
         '❌ ' +
-        esc(e.message) +
+
+        esc(
+          e.message
+        ) +
 
       '</div>';
 
@@ -1217,7 +1560,7 @@ async function(i){
 
 
 /* =====================================================
-   THEO DÕI VIDEO VEO
+   THEO DÕI VIDEO
    ===================================================== */
 
 async function pollVideo(
@@ -1236,19 +1579,25 @@ async function pollVideo(
   ){
 
     await new Promise(
+
       r =>
         setTimeout(
           r,
           5000
         )
+
     );
 
 
     const r =
       await fetch(
+
         API_URL +
         '/video-status?operation=' +
-        encodeURIComponent(op)
+        encodeURIComponent(
+          op
+        )
+
       );
 
 
@@ -1269,8 +1618,11 @@ async function pollVideo(
 
 
     if(
-      d.status==='processing' ||
-      d.done===false
+      d.status ===
+      'processing' ||
+
+      d.done ===
+      false
     ){
 
       result.innerHTML =
@@ -1295,13 +1647,20 @@ async function pollVideo(
 
 
     if(
-      d.status==='completed' &&
+
+      d.status ===
+      'completed' &&
+
       d.video_uri
+
     ){
 
       const src =
+
         API_URL +
+
         '/video?uri=' +
+
         encodeURIComponent(
           d.video_uri
         );
@@ -1318,10 +1677,15 @@ async function pollVideo(
           '<br>' +
 
           '<video ' +
+
             'controls ' +
+
             'playsinline ' +
+
             'src="' +
+
             esc(src) +
+
             '">' +
 
           '</video>' +
@@ -1329,9 +1693,13 @@ async function pollVideo(
           '<br>' +
 
           '<a ' +
+
             'href="' +
+
             esc(src) +
+
             '" ' +
+
             'target="_blank">' +
 
             'Mở video' +
@@ -1347,16 +1715,22 @@ async function pollVideo(
 
 
     throw new Error(
+
       d.gemini_message ||
+
       d.error ||
+
       'Veo không trả về video.'
+
     );
 
   }
 
 
   throw new Error(
+
     'Veo tạo quá lâu. Hãy thử lại cảnh này.'
+
   );
 
 }
@@ -1369,11 +1743,16 @@ async function pollVideo(
 
 $('allBtn')
 .addEventListener(
+
   'click',
+
   async()=>{
 
+
     if(
-      !currentScript?.scenes?.length
+      !currentScript
+        ?.scenes
+        ?.length
     ){
 
       return;
@@ -1385,15 +1764,20 @@ $('allBtn')
       $('allBtn');
 
 
-    btn.disabled=true;
+    btn.disabled =
+      true;
 
 
     status(
+
       $('globalStatus'),
 
       '🚀 Bắt đầu tạo ' +
+
       currentScript.scenes.length +
+
       ' cảnh. Mỗi cảnh sẽ tự chờ Veo hoàn tất...'
+
     );
 
 
@@ -1401,54 +1785,77 @@ $('allBtn')
 
 
       for(
+
         let i=0;
-        i<currentScript.scenes.length;
+
+        i<
+        currentScript.scenes.length;
+
         i++
+
       ){
 
         status(
+
           $('globalStatus'),
 
           '🎬 Đang tạo cảnh ' +
+
           (i+1) +
+
           '/' +
+
           currentScript.scenes.length +
+
           '...'
+
         );
 
 
-        await window.createScene(i);
+        await window.createScene(
+          i
+        );
 
       }
 
 
       status(
+
         $('globalStatus'),
 
         '✅ Đã gửi và xử lý xong quy trình cho tất cả cảnh.',
 
         'success'
+
       );
 
 
     }catch(e){
 
+
       status(
+
         $('globalStatus'),
 
         '❌ ' +
-        esc(e.message),
+        esc(
+          e.message
+        ),
 
         'error'
+
       );
+
 
     }finally{
 
-      btn.disabled=false;
+      btn.disabled =
+        false;
 
     }
 
   }
+
 );
 
 
