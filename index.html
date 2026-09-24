@@ -7,7 +7,7 @@
 
 <meta name="viewport" content="width=device-width,initial-scale=1.0">
 
-<title>PHƯƠNG THÙY AI VIDEO</title>
+<title>THÙY AI VIDEO — Gemini + Google Flow</title>
 
 <style>
 
@@ -237,11 +237,11 @@ textarea{
 
   <div class="header">
 
-    <h1>PHƯƠNG THÙY AI VIDEO</h1>
+    <h1>THÙY AI VIDEO</h1>
 
     <p>
-      Một câu lệnh → AI viết kịch bản → chia cảnh →
-      ảnh nhân vật tham chiếu → Veo 3.1.
+      Một câu lệnh → Gemini viết kịch bản → chia cảnh →
+      tạo Prompt Google Flow → THÙY MỸ PHẨM + giọng Erinome.
     </p>
 
   </div>
@@ -380,47 +380,40 @@ textarea{
 
 
   <!-- ========================= -->
-  <!-- NHÂN VẬT -->
+  <!-- NHÂN VẬT GOOGLE FLOW -->
   <!-- ========================= -->
 
   <div class="card">
 
-    <h2>👤 NHÂN VẬT THAM CHIẾU</h2>
+    <h2>👩 NHÂN VẬT GOOGLE FLOW</h2>
 
     <div class="notice">
-
-      Tải 1 ảnh rõ khuôn mặt nhân vật.
-      Khi có ảnh tham chiếu, hệ thống sẽ tự dùng
-      8 giây cho cảnh Veo.
-
+      <b>THÙY MỸ PHẨM</b><br>
+      Nhân vật đã tạo sẵn trong Google Flow.<br>
+      Giọng cố định: <b>Erinome</b> — Female, clear, mid pitch.<br>
+      Tool sẽ tự chèn <b>@THÙY MỸ PHẨM</b> vào Prompt Flow.
     </div>
 
-    <br>
+    <div class="grid">
 
-    <label>Ảnh nhân vật</label>
+      <div class="field">
+        <label>Tên nhân vật trong Flow</label>
+        <input id="flowCharacter" value="@THÙY MỸ PHẨM">
+      </div>
 
-    <input
-      type="file"
-      id="characterImage"
-      accept="image/png,image/jpeg,image/webp"
-    >
+      <div class="field">
+        <label>Giọng</label>
+        <input id="flowVoice" value="Erinome — Female, clear, mid pitch" readonly>
+      </div>
 
-
-    <div
-      id="preview"
-      class="preview"
-    >
-
-      <b>Ảnh đã chọn:</b>
-
-      <br>
-
-      <img id="previewImg">
+      <div class="field full">
+        <label>Thiết lập cố định</label>
+        <textarea id="flowCharacterRules" readonly>Giữ nhân vật nữ Việt Nam khoảng 30 tuổi, dịu dàng, tự tin, thân thiện, thanh lịch và tự nhiên. Khi tạo video trong Google Flow, dùng nhân vật @THÙY MỸ PHẨM. Với cảnh có thoại, dùng giọng Erinome và giữ phong cách nói tự nhiên, rõ ràng, không quá quảng cáo.</textarea>
+      </div>
 
     </div>
 
   </div>
-
 
 
   <!-- ========================= -->
@@ -433,20 +426,16 @@ textarea{
     style="display:none"
   >
 
-    <h2>🎬 KỊCH BẢN HOÀN CHỈNH</h2>
+    <h2>🎬 KỊCH BẢN + PROMPT GOOGLE FLOW</h2>
 
     <div id="scriptContent"></div>
-
 
     <button
       class="button green"
       id="allBtn"
     >
-
-      🚀 TẠO TẤT CẢ CẢNH VIDEO
-
+      📋 COPY TẤT CẢ PROMPT FLOW
     </button>
-
 
     <div
       id="globalStatus"
@@ -454,9 +443,6 @@ textarea{
     ></div>
 
   </div>
-
-
-</div>
 
 
 
@@ -467,36 +453,16 @@ textarea{
    API
    ===================================================== */
 
-
-/*
- * GOOGLE APPS SCRIPT
- *
- * Dùng cho:
- * GitHub Pages
- *    ↓
- * JSONP
- *    ↓
- * Apps Script
- *    ↓
- * Gemini
- */
-
 const SCRIPT_API_URL =
   'https://script.google.com/macros/s/AKfycbzpIjAWninGb2hXQHezLSvRfd2G8TBFb8FRCjQkIjm-5Buyfbw6HjgTCl2sN9Stou2M/exec';
 
-
-
 /*
- * CLOUDFLARE WORKER
- *
- * Vẫn giữ cho:
- * - Veo
- * - video-status
- * - video
+ * VIDEO:
+ * Google Flow is used for Veo generation.
+ * This page does NOT call the old Cloudflare Worker for Veo.
  */
+const FLOW_URL = 'https://flow.google.com/';
 
-const API_URL =
-  'https://phuong-thuy-ai-video.phuongthuy-lotteria.workers.dev';
 
 
 
@@ -505,12 +471,6 @@ const API_URL =
    ===================================================== */
 
 let currentScript = null;
-
-let imageData = '';
-
-let imageMime = 'image/jpeg';
-
-let sceneOperations = {};
 
 
 
@@ -1104,760 +1064,199 @@ function formatError(d){
 
 
 /* =====================================================
+   PROMPT GOOGLE FLOW
+   ===================================================== */
+
+function buildFlowPrompt(scene){
+
+  const character =
+    $('flowCharacter').value.trim() || '@THÙY MỸ PHẨM';
+
+  const voice =
+    $('flowVoice').value.trim() || 'Erinome';
+
+  const base =
+    scene.video_prompt ||
+    scene.prompt_video ||
+    scene.videoPrompt ||
+    scene.visual_description ||
+    '';
+
+  const dialogue =
+    scene.dialogue ||
+    scene.voiceover ||
+    '';
+
+  return [
+    character + ' xuất hiện trong cảnh này.',
+    'Giữ ngoại hình nhân vật ổn định, tự nhiên, chân thực, nữ Việt Nam khoảng 30 tuổi, phong thái dịu dàng, thanh lịch và thân thiện.',
+    base,
+    dialogue
+      ? 'Cô ấy nói bằng tiếng Việt với giọng ' + voice + ': "' + dialogue + '"'
+      : '',
+    'Biểu cảm tự nhiên, chuyển động cơ thể nhẹ nhàng, ánh sáng chân thực, cinematic, video dọc 9:16.',
+    'Không phụ đề, không chữ trên màn hình, không watermark.'
+  ].filter(Boolean).join('\n\n');
+}
+
+
+/* =====================================================
    HIỂN THỊ KỊCH BẢN
    ===================================================== */
 
 function renderScript(s){
 
-  $('scriptBox')
-    .style.display =
-    'block';
-
-
-  const scenes =
-    s.scenes || [];
-
-
-  $('scriptContent')
-    .innerHTML =
-
-      '<div class="notice">' +
-
-        '<b>' +
-
-        esc(
-          s.title ||
-          'Kịch bản'
-        ) +
-
-        '</b>' +
-
-        '<br>' +
-
-        'Tổng thời lượng: ' +
-
-        esc(
-          s.total_duration_seconds ||
-          ''
-        ) +
-
-        ' giây' +
-
-      '</div>' +
-
-
-      scenes
-        .map(
-          (x,i) => {
-
-            const prompt =
-
-              x.video_prompt ||
-
-              x.prompt_video ||
-
-              x.videoPrompt ||
-
-              x.visual_description ||
-
-              '';
-
-
-            const dialogue =
-
-              x.dialogue ||
-
-              x.voiceover ||
-
-              '';
-
-
-            return `
-
-              <div
-                class="scene"
-                id="scene-${i}"
-              >
-
-                <div class="scene-head">
-
-                  <div>
-
-                    <b>
-                      🎬 Cảnh ${i+1}
-                    </b>
-
-                  </div>
-
-
-                  <span class="badge">
-
-                    ${esc(
-                      x.duration_seconds ||
-                      8
-                    )}
-
-                    giây
-
-                  </span>
-
-                </div>
-
-
-                <div class="scene-row">
-
-                  <div class="scene-label">
-                    Hình ảnh
-                  </div>
-
-
-                  <div class="scene-content">
-
-                    ${esc(
-
-                      x.visual_description ||
-
-                      x.image_prompt ||
-
-                      x.prompt_image ||
-
-                      ''
-
-                    )}
-
-                  </div>
-
-                </div>
-
-
-                <div class="scene-row">
-
-                  <div class="scene-label">
-                    Lời thoại
-                  </div>
-
-
-                  <div class="scene-content">
-
-                    ${esc(
-                      dialogue
-                    )}
-
-                  </div>
-
-                </div>
-
-
-                <div class="scene-row">
-
-                  <div class="scene-label">
-                    Prompt video
-                  </div>
-
-
-                  <div class="scene-content">
-
-                    ${esc(
-                      prompt
-                    )}
-
-                  </div>
-
-                </div>
-
-
-                <div class="scene-actions">
-
-
-                  <button
-
-                    class="button orange"
-
-                    onclick="createScene(${i})"
-
-                  >
-
-                    🎬 TẠO CẢNH NÀY
-
-                  </button>
-
-
-                  <button
-
-                    class="button"
-
-                    onclick="copyPrompt(${i})"
-
-                  >
-
-                    📋 COPY PROMPT
-
-                  </button>
-
-
-                </div>
-
-
-                <div
-                  id="result-${i}"
-                ></div>
-
-
-              </div>
-
-            `;
-
-          }
-        )
-        .join('');
-
+  $('scriptBox').style.display = 'block';
+
+  const scenes = s.scenes || [];
+
+  $('scriptContent').innerHTML =
+    '<div class="notice">' +
+      '<b>' + esc(s.title || 'Kịch bản') + '</b>' +
+      '<br>' +
+      'Tổng thời lượng: ' +
+      esc(s.total_duration_seconds || '') +
+      ' giây' +
+      '<br><br>' +
+      'Workflow: <b>Gemini → COPY PROMPT → Google Flow → Veo 3.1 Lite</b>' +
+    '</div>' +
+
+    scenes.map((x,i) => {
+
+      const dialogue =
+        x.dialogue ||
+        x.voiceover ||
+        '';
+
+      const flowPrompt = buildFlowPrompt(x);
+
+      return `
+        <div class="scene" id="scene-${i}">
+
+          <div class="scene-head">
+            <div><b>🎬 Cảnh ${i+1}</b></div>
+            <span class="badge">
+              ${esc(x.duration_seconds || 8)} giây
+            </span>
+          </div>
+
+          <div class="scene-row">
+            <div class="scene-label">Hình ảnh</div>
+            <div class="scene-content">
+              ${esc(
+                x.visual_description ||
+                x.image_prompt ||
+                x.prompt_image ||
+                ''
+              )}
+            </div>
+          </div>
+
+          <div class="scene-row">
+            <div class="scene-label">Lời thoại</div>
+            <div class="scene-content">${esc(dialogue)}</div>
+          </div>
+
+          <div class="scene-row">
+            <div class="scene-label">🎥 Prompt Google Flow</div>
+            <div class="scene-content">${esc(flowPrompt)}</div>
+          </div>
+
+          <div class="scene-actions">
+            <button
+              class="button orange"
+              onclick="copyFlowPrompt(${i})"
+            >
+              📋 COPY PROMPT FLOW
+            </button>
+
+            <button
+              class="button"
+              onclick="openFlow()"
+            >
+              🚀 MỞ GOOGLE FLOW
+            </button>
+          </div>
+
+          <div id="result-${i}"></div>
+
+        </div>
+      `;
+    }).join('');
 
   window.scrollTo({
-
-    top:
-      $('scriptBox')
-        .offsetTop - 10,
-
-    behavior:
-      'smooth'
-
+    top: $('scriptBox').offsetTop - 10,
+    behavior: 'smooth'
   });
-
 }
 
 
-
 /* =====================================================
-   COPY PROMPT
+   COPY 1 PROMPT
    ===================================================== */
 
-function copyPrompt(i){
+function copyFlowPrompt(i){
 
-  const x =
-    currentScript
-      .scenes[i];
+  const scene = currentScript?.scenes?.[i];
 
+  if(!scene) return;
 
-  const p =
+  const prompt = buildFlowPrompt(scene);
 
-    x.video_prompt ||
-
-    x.prompt_video ||
-
-    x.videoPrompt ||
-
-    x.visual_description ||
-
-    '';
-
-
-  navigator.clipboard?.writeText(
-    p
-  );
-
+  navigator.clipboard?.writeText(prompt);
 
   status(
-
     $('result-'+i),
-
-    '📋 Đã copy prompt.',
-
+    '📋 Đã copy Prompt Flow. Bây giờ mở Google Flow và dán vào ô tạo video.',
     'success'
-
   );
-
 }
 
 
-
 /* =====================================================
-   TẠO 1 CẢNH VIDEO
+   MỞ GOOGLE FLOW
    ===================================================== */
 
-window.createScene =
-async function(i){
-
-  const scene =
-    currentScript
-      ?.scenes
-      ?. [i];
+function openFlow(){
+  window.open(FLOW_URL, '_blank');
+}
 
 
-  if(!scene){
+/* =====================================================
+   COPY TẤT CẢ PROMPT
+   ===================================================== */
 
-    return;
+$('allBtn').addEventListener('click', async()=>{
 
-  }
+  if(!currentScript?.scenes?.length) return;
 
-
-  const result =
-    $('result-'+i);
-
-
-  const p =
-
-    scene.video_prompt ||
-
-    scene.prompt_video ||
-
-    scene.videoPrompt ||
-
-    scene.visual_description ||
-
-    '';
-
-
-  const duration =
-    seconds(
-      scene.duration_seconds,
-      imageData
-    );
-
-
-  result.innerHTML =
-
-    '<div class="status" style="display:block">' +
-
-      '⏳ Đang gửi cảnh ' +
-
-      (i+1) +
-
-      ' cho Veo... (' +
-
-      duration +
-
-      ' giây)' +
-
-    '</div>';
-
+  const all = currentScript.scenes.map((scene,i)=>{
+    return '===== CẢNH ' + (i+1) + ' =====\n\n' +
+      buildFlowPrompt(scene);
+  }).join('\n\n');
 
   try{
+    await navigator.clipboard.writeText(all);
 
-
-    const payload = {
-
-      prompt:
-        p,
-
-      prompt_video:
-        p,
-
-      aspect_ratio:
-        '9:16',
-
-      duration_seconds:
-        duration,
-
-      ...imagePayload()
-
-    };
-
-
-    const r =
-      await fetch(
-
-        API_URL +
-        '/generate-video',
-
-        {
-
-          method:
-            'POST',
-
-          headers: {
-
-            'Content-Type':
-              'application/json'
-
-          },
-
-          body:
-            JSON.stringify(
-              payload
-            )
-
-        }
-
-      );
-
-
-    const d =
-      await r.json();
-
-
-    if(
-      !r.ok ||
-      !d.ok
-    ){
-
-      throw new Error(
-
-        formatError(d) +
-
-        ' ' +
-
-        (
-          d.details
-            ?.error
-            ?.message ||
-          ''
-        )
-
-      );
-
-    }
-
-
-    const op =
-
-      d.operation_name ||
-
-      d.operationName ||
-
-      d.operation ||
-
-      '';
-
-
-    if(!op){
-
-      throw new Error(
-        'Worker không trả về operation.'
-      );
-
-    }
-
-
-    sceneOperations[i] =
-      op;
-
-
-    await pollVideo(
-      i,
-      op
+    status(
+      $('globalStatus'),
+      '✅ Đã copy toàn bộ Prompt Flow của ' +
+      currentScript.scenes.length +
+      ' cảnh.',
+      'success'
     );
-
 
   }catch(e){
 
-
-    result.innerHTML =
-
-      '<div class="status error" style="display:block">' +
-
-        '❌ ' +
-
-        esc(
-          e.message
-        ) +
-
-      '</div>';
-
-  }
-
-};
-
-
-
-/* =====================================================
-   THEO DÕI VIDEO
-   ===================================================== */
-
-async function pollVideo(
-  i,
-  op
-){
-
-  const result =
-    $('result-'+i);
-
-
-  for(
-    let n=0;
-    n<90;
-    n++
-  ){
-
-    await new Promise(
-
-      r =>
-        setTimeout(
-          r,
-          5000
-        )
-
-    );
-
-
-    const r =
-      await fetch(
-
-        API_URL +
-        '/video-status?operation=' +
-        encodeURIComponent(
-          op
-        )
-
-      );
-
-
-    const d =
-      await r.json();
-
-
-    if(
-      !r.ok ||
-      !d.ok
-    ){
-
-      throw new Error(
-        formatError(d)
-      );
-
-    }
-
-
-    if(
-      d.status ===
-      'processing' ||
-
-      d.done ===
-      false
-    ){
-
-      result.innerHTML =
-
-        '<div class="status" style="display:block">' +
-
-          '⏳ Veo đang tạo video... ' +
-
-          Math.min(
-            n+1,
-            90
-          ) +
-
-          '/90' +
-
-        '</div>';
-
-
-      continue;
-
-    }
-
-
-    if(
-
-      d.status ===
-      'completed' &&
-
-      d.video_uri
-
-    ){
-
-      const src =
-
-        API_URL +
-
-        '/video?uri=' +
-
-        encodeURIComponent(
-          d.video_uri
-        );
-
-
-      result.innerHTML =
-
-        '<div class="video-box">' +
-
-          '<b>✅ Cảnh ' +
-          (i+1) +
-          ' đã tạo xong!</b>' +
-
-          '<br>' +
-
-          '<video ' +
-
-            'controls ' +
-
-            'playsinline ' +
-
-            'src="' +
-
-            esc(src) +
-
-            '">' +
-
-          '</video>' +
-
-          '<br>' +
-
-          '<a ' +
-
-            'href="' +
-
-            esc(src) +
-
-            '" ' +
-
-            'target="_blank">' +
-
-            'Mở video' +
-
-          '</a>' +
-
-        '</div>';
-
-
-      return;
-
-    }
-
-
-    throw new Error(
-
-      d.gemini_message ||
-
-      d.error ||
-
-      'Veo không trả về video.'
-
-    );
-
-  }
-
-
-  throw new Error(
-
-    'Veo tạo quá lâu. Hãy thử lại cảnh này.'
-
-  );
-
-}
-
-
-
-/* =====================================================
-   TẠO TẤT CẢ CẢNH
-   ===================================================== */
-
-$('allBtn')
-.addEventListener(
-
-  'click',
-
-  async()=>{
-
-
-    if(
-      !currentScript
-        ?.scenes
-        ?.length
-    ){
-
-      return;
-
-    }
-
-
-    const btn =
-      $('allBtn');
-
-
-    btn.disabled =
-      true;
-
-
     status(
-
       $('globalStatus'),
-
-      '🚀 Bắt đầu tạo ' +
-
-      currentScript.scenes.length +
-
-      ' cảnh. Mỗi cảnh sẽ tự chờ Veo hoàn tất...'
-
+      '❌ Không thể copy tự động. Hãy dùng nút COPY PROMPT từng cảnh.',
+      'error'
     );
-
-
-    try{
-
-
-      for(
-
-        let i=0;
-
-        i<
-        currentScript.scenes.length;
-
-        i++
-
-      ){
-
-        status(
-
-          $('globalStatus'),
-
-          '🎬 Đang tạo cảnh ' +
-
-          (i+1) +
-
-          '/' +
-
-          currentScript.scenes.length +
-
-          '...'
-
-        );
-
-
-        await window.createScene(
-          i
-        );
-
-      }
-
-
-      status(
-
-        $('globalStatus'),
-
-        '✅ Đã gửi và xử lý xong quy trình cho tất cả cảnh.',
-
-        'success'
-
-      );
-
-
-    }catch(e){
-
-
-      status(
-
-        $('globalStatus'),
-
-        '❌ ' +
-        esc(
-          e.message
-        ),
-
-        'error'
-
-      );
-
-
-    }finally{
-
-      btn.disabled =
-        false;
-
-    }
 
   }
 
-);
-
+});
 
 </script>
 
