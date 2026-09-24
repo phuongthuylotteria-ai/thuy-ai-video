@@ -1,45 +1,81 @@
 <!doctype html>
 <html lang="vi">
 <head>
-<meta charset="utf-8"><meta name="viewport" content="width=device-width,initial-scale=1">
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width,initial-scale=1">
 <title>THÙY AI VIDEO</title>
 <style>
-*{box-sizing:border-box}body{margin:0;background:#f5f6fa;font-family:Arial,sans-serif;color:#222}.wrap{max-width:1000px;margin:auto;padding:20px}.card{background:#fff;border-radius:16px;padding:20px;margin-bottom:16px;box-shadow:0 4px 18px #0001}h1{margin:0}.hero{background:linear-gradient(135deg,#7c3aed,#ec4899);color:#fff}.grid{display:grid;grid-template-columns:1fr 1fr;gap:14px}.full{grid-column:1/-1}label{font-weight:700;display:block;margin-bottom:6px}input,select,textarea{width:100%;padding:12px;border:1px solid #d1d5db;border-radius:10px;font-size:15px}textarea{min-height:90px}.btn{display:block;width:100%;border:0;border-radius:10px;padding:14px;margin-top:12px;color:#fff;font-weight:700;font-size:15px;cursor:pointer}.btn:disabled{opacity:.55;cursor:not-allowed}.purple{background:linear-gradient(135deg,#7c3aed,#ec4899)}.orange{background:#ea580c}.gray{background:#475569}.status{padding:12px;border-radius:10px;margin-top:12px;line-height:1.5}.status[hidden]{display:none}.ok{background:#ecfdf5;border:1px solid #86efac}.bad{background:#fef2f2;border:1px solid #fca5a5}.info{background:#eff6ff;border:1px solid #93c5fd}.scene{border:1px solid #e5e7eb;border-radius:12px;padding:15px;margin-top:14px;background:#fafafa}.scene p{background:#fff;border:1px solid #e5e7eb;border-radius:8px;padding:10px;line-height:1.5}.video{width:100%;max-width:600px;margin-top:10px;border-radius:10px;background:#000}.small{color:#64748b;font-size:13px}@media(max-width:700px){.grid{grid-template-columns:1fr}.full{grid-column:auto}}
-</style></head>
-<body><main class="wrap">
-<section class="card hero"><h1>🎬 THÙY AI VIDEO</h1><p>AI viết kịch bản → chia cảnh → dùng ảnh nhân vật → PixVerse tạo video 9:16.</p></section>
-<section class="card"><h2>✨ TẠO KỊCH BẢN</h2><div class="grid">
-<div class="full"><label>Chủ đề / sản phẩm</label><input id="topic" placeholder="Ví dụ: Kem chống nắng ADA cho phụ nữ 30-50 tuổi"></div>
+*{box-sizing:border-box}
+body{margin:0;background:#f5f6fa;font-family:Arial,sans-serif;color:#222}
+.wrap{max-width:1000px;margin:auto;padding:20px}
+.card{background:#fff;border-radius:16px;padding:20px;margin-bottom:16px;box-shadow:0 4px 18px #0001}
+.hero{background:linear-gradient(135deg,#7c3aed,#ec4899);color:#fff}
+.grid{display:grid;grid-template-columns:1fr 1fr;gap:14px}
+.full{grid-column:1/-1}
+label{font-weight:700;display:block;margin-bottom:6px}
+input,select,textarea{width:100%;padding:12px;border:1px solid #d1d5db;border-radius:10px;font-size:15px}
+textarea{min-height:90px}
+.btn{display:block;width:100%;border:0;border-radius:10px;padding:14px;margin-top:12px;color:#fff;font-weight:700;font-size:15px;cursor:pointer}
+.btn:disabled{opacity:.55;cursor:not-allowed}
+.purple{background:linear-gradient(135deg,#7c3aed,#ec4899)}
+.orange{background:#ea580c}
+.gray{background:#475569}
+.status{padding:12px;border-radius:10px;margin-top:12px;line-height:1.5}
+.status[hidden]{display:none}
+.ok{background:#ecfdf5;border:1px solid #86efac}
+.bad{background:#fef2f2;border:1px solid #fca5a5}
+.info{background:#eff6ff;border:1px solid #93c5fd}
+.scene{border:1px solid #e5e7eb;border-radius:12px;padding:15px;margin-top:14px;background:#fafafa}
+.scene p{background:#fff;border:1px solid #e5e7eb;border-radius:8px;padding:10px;line-height:1.5}
+.video{width:100%;max-width:600px;margin-top:10px;border-radius:10px;background:#000}
+.small{color:#64748b;font-size:13px}
+@media(max-width:700px){.grid{grid-template-columns:1fr}.full{grid-column:auto}}
+</style>
+</head>
+<body>
+<main class="wrap">
+<section class="card hero">
+<h1>🎬 THÙY AI VIDEO</h1>
+<p>AI viết kịch bản → chia cảnh → dùng ảnh nhân vật → PixVerse tạo video 9:16.</p>
+</section>
+
+<section class="card">
+<h2>✨ TẠO KỊCH BẢN</h2>
+<div class="grid">
+<div class="full"><label>Chủ đề / sản phẩm</label><input id="topic" value="Kem chống nắng ADA cho phụ nữ 25-50 tuổi"></div>
 <div><label>Thời lượng</label><select id="duration"><option>15 giây</option><option selected>30 giây</option><option>45 giây</option></select></div>
 <div><label>Phong cách</label><select id="style"><option>TikTok bán hàng</option><option selected>Review sản phẩm</option><option>Vlog đời thường</option><option>Chuyên gia tư vấn</option></select></div>
 <div><label>Đối tượng</label><input id="audience" value="Phụ nữ Việt Nam 25-50 tuổi"></div>
 <div><label>Chất lượng</label><select id="quality"><option>540p</option><option selected>720p</option><option>1080p</option></select></div>
-<div class="full"><label>Yêu cầu thêm</label><textarea id="extra">Nhân vật nữ Việt Nam khoảng 30 tuổi, tự nhiên, sang trọng. Giữ khuôn mặt, tóc, trang phục nhất quán. Video dọc 9:16, không phụ đề, không chữ.</textarea></div></div>
-<button id="script" class="btn purple">✨ AI TỰ VIẾT KỊCH BẢN</button></section>
-<section class="card"><h2>🧑‍🦰 ẢNH NHÂN VẬT</h2><label>Chọn ảnh rõ mặt</label><input id="face" type="file" accept="image/png,image/jpeg,image/webp"><div id="faceStatus" class="status" hidden></div>
-<label style="margin-top:12px">Quy tắc giữ nhân vật</label><textarea id="rules">Keep exactly the same Vietnamese woman from the reference image. Preserve the same face identity, facial proportions, hairstyle, skin tone, body proportions, outfit and overall appearance in every scene. Natural realistic human movement.</textarea></section>
-<section class="card"><h2>⚡ PIXVERSE AUTO</h2><p class="small">Nếu AI viết kịch bản chậm, hệ thống tự dùng kịch bản dự phòng để không bị treo.</p><button id="health" class="btn gray">🔎 KIỂM TRA KẾT NỐI PIXVERSE</button><button id="auto" class="btn orange">⚡ TẠO VIDEO TỰ ĐỘNG</button><div id="status" class="status" hidden></div></section>
-<section id="box" class="card" hidden><h2>🎬 KỊCH BẢN + VIDEO</h2><div id="summary" class="status info"></div><div id="scenes"></div></section>
-</main><script>
-(function(){
-'use strict';
-const WORKER='https://thuy-ai-video-api.phuongthuy-lotteria.workers.dev';
-const SCRIPT='https://script.google.com/macros/s/AKfycbzpIjAWninGb2hXQHezLSvRfd2G8TBFb8FRCjQkIjm-5Buyfbw6HjgTCl2sN9Stou2M/exec';
-let script=null,imgId=null;
-const $=id=>document.getElementById(id);
-function show(id,msg,type='info'){const e=$(id);if(e){e.className='status '+type;e.textContent=msg;e.hidden=false;}}
-function esc(v){return String(v??'').replace(/[&<>\"']/g,c=>({'&':'&amp;','<':'&lt;','>':'&gt;','\"':'&quot;',"'":'&#39;'}[c]));}
-async function api(path,opts={}){let r;try{r=await fetch(WORKER+path,{mode:'cors',credentials:'omit',cache:'no-store',redirect:'follow',...opts});}catch(e){throw new Error('Không kết nối được PixVerse Worker: '+(e.message||'Failed to fetch'));}let d;try{d=await r.json();}catch(e){throw new Error('Worker trả về dữ liệu không hợp lệ (HTTP '+r.status+')');}if(!r.ok||d.ok===false){const p=d.pixverse||{};throw new Error(p.ErrMsg||d.message||d.error||('HTTP '+r.status));}return d;}
-function clampDuration(v){const n=Number(v);return n>=8?8:5;}
-async function health(){show('status','Đang kiểm tra Worker PixVerse...');try{const d=await api('/health?ts='+Date.now());show('status','Kết nối thành công — '+(d.worker||'THUY AI VIDEO - PIXVERSE')+' — model '+(d.model||'v6'),'ok');}catch(e){show('status',e.message,'bad');}}
-function fallback(){const topic=$('topic').value.trim()||'kem chống nắng';const total=Number(($('duration').value.match(/\d+/)||['30'])[0]);const n=total<=15?3:total<=30?4:5;const scenes=[];for(let i=0;i<n;i++){const d=total<=15?5:8;scenes.push({scene:i+1,duration_seconds:d,visual_description:'Cùng một phụ nữ Việt Nam khoảng 30 tuổi, khuôn mặt và trang phục nhất quán, bối cảnh sáng sang trọng. Nội dung: '+topic,dialogue:i===0?'Chị em mình đừng bỏ qua điều này nhé!':i===n-1?'Nếu thấy hữu ích, hãy theo dõi mình nhé!':'Đây là điều mình muốn chia sẻ với chị em hôm nay.',video_prompt:'Vertical 9:16 realistic cinematic video, same Vietnamese woman from reference image, '+topic+', natural facial movement, realistic human motion, soft lighting, consistent face hair outfit, no subtitles, no text, no watermark.'});}return {title:'Kịch bản '+topic,total_duration_seconds:scenes.reduce((a,s)=>a+s.duration_seconds,0),scenes};}
-function parse(v){if(v&&Array.isArray(v.scenes))return v;let t=typeof v==='string'?v:(v&&v.result)||'';t=String(t).replace(/^```json\s*/i,'').replace(/\s*```$/,'').trim();try{return JSON.parse(t);}catch(e){const a=t.indexOf('{'),b=t.lastIndexOf('}');if(a>=0&&b>a)try{return JSON.parse(t.slice(a,b+1));}catch(x){}return null;}}
-function aiScript(){return new Promise((resolve,reject)=>{const cb='thuyAi'+Date.now(),s=document.createElement('script');const timer=setTimeout(()=>{cleanup();reject(new Error('AI phản hồi quá lâu'));},12000);function cleanup(){clearTimeout(timer);s.remove();try{delete window[cb];}catch(e){}}window[cb]=d=>{cleanup();resolve(d);};const prompt=['Viết kịch bản TikTok tiếng Việt.','Chủ đề: '+$('topic').value.trim(),'Thời lượng: '+$('duration').value,'Phong cách: '+$('style').value,'Đối tượng: '+$('audience').value,'Yêu cầu: '+$('extra').value,'Trả JSON duy nhất với title,total_duration_seconds,scenes. Mỗi scene có duration_seconds là NUMBER (chỉ 5 hoặc 8), visual_description, dialogue, video_prompt.'].join('\n');const q=new URLSearchParams({callback:cb,prompt});s.onerror=()=>{cleanup();reject(new Error('Không kết nối AI trung gian'));};s.src=SCRIPT+'?'+q.toString();document.body.appendChild(s);});}
-async function makeScript(){try{const d=parse(await aiScript());if(d&&Array.isArray(d.scenes)&&d.scenes.length)return d;}catch(e){}return fallback();}
-function render(s){script=s;$('box').hidden=false;$('summary').innerHTML='<b>'+esc(s.title||'Kịch bản')+'</b><br>Tổng thời lượng: '+Number(s.total_duration_seconds||0)+' giây';$('scenes').innerHTML=s.scenes.map((x,i)=>'<section class="scene"><b>🎬 CẢNH '+(i+1)+' — '+clampDuration(x.duration_seconds)+' giây</b><p><b>Hình ảnh:</b> '+esc(x.visual_description)+'</p><p><b>Lời thoại:</b> '+esc(x.dialogue)+'</p><p><b>Prompt:</b> '+esc(x.video_prompt)+'</p><button class="btn orange sceneBtn" data-i="'+i+'">🎬 TẠO CẢNH NÀY</button><div id="s'+i+'" class="status" hidden></div></section>').join('');document.querySelectorAll('.sceneBtn').forEach(b=>b.addEventListener('click',()=>createOne(Number(b.dataset.i))));}
-async function upload(file){const f=new FormData();f.append('image',file,file.name||'reference.jpg');const d=await api('/upload-image',{method:'POST',body:f});const id=d.pixverse?.Resp?.img_id;if(!id)throw new Error('PixVerse không trả về img_id.');return id;}
-async function createOne(i){if(!script)return;const file=$('face').files[0];if(!file){show('faceStatus','Hãy chọn ảnh nhân vật trước.','bad');return;}const st='s'+i;try{show(st,'Đang tải ảnh và tạo cảnh...');if(!imgId)imgId=await upload(file);const s=script.scenes[i];const prompt='@main_character '+(s.video_prompt||s.visual_description||'')+' '+$('rules').value+' Vertical 9:16, realistic motion, no subtitles, no text, no watermark.';const d=await api('/generate-fusion',{method:'POST',headers:{'Content-Type':'application/json'},body:JSON.stringify({img_id:imgId,prompt,duration:clampDuration(s.duration_seconds),quality:$('quality').value,aspect_ratio:'9:16',model:'v6'})});const id=d.pixverse?.Resp?.video_id;if(!id)throw new Error('PixVerse không trả về video_id.');show(st,'Đã gửi PixVerse. Đang chờ video...');let url=null;for(let n=0;n<120;n++){const q=await api('/status?video_id='+encodeURIComponent(id));const x=q.pixverse?.Resp||{};if(x.status===1&&x.url){url=x.url;break;}if(x.status===7)throw new Error('PixVerse từ chối cảnh do kiểm duyệt.');if(x.status===8)throw new Error('PixVerse tạo cảnh thất bại.');await new Promise(r=>setTimeout(r,4000));}if(!url)throw new Error('Cảnh xử lý quá lâu.');$(st).className='status ok';$(st).hidden=false;$(st).innerHTML='✅ Hoàn tất<br><video controls playsinline class="video" src="'+esc(url)+'"></video><br><a target="_blank" rel="noopener" href="'+esc(url)+'">Mở video</a>';}catch(e){show(st,e.message,'bad');}}
-async function generate(){const file=$('face').files[0];if(!file){show('faceStatus','Hãy chọn ảnh nhân vật trước.','bad');return;}$('auto').disabled=true;try{show('status','Đang tạo kịch bản...');script=await makeScript();render(script);show('status','Kịch bản xong. Đang tạo từng cảnh...');if(!imgId)imgId=await upload(file);for(let i=0;i<script.scenes.length;i++)await createOne(i);show('status','Đã xử lý xong tất cả cảnh.','ok');}catch(e){show('status',e.message,'bad');}finally{$('auto').disabled=false;}}
-$('health').addEventListener('click',health);$('auto').addEventListener('click',generate);$('script').addEventListener('click',async()=>{$('script').disabled=true;try{show('status','Đang viết kịch bản...');render(await makeScript());show('status','Đã tạo kịch bản.','ok');}catch(e){show('status',e.message,'bad');}finally{$('script').disabled=false;}});$('face').addEventListener('change',()=>{imgId=null;show('faceStatus','Đã chọn ảnh: '+$('face').files[0].name,'ok');});
-})();
-</script></body></html>
+<div class="full"><label>Yêu cầu thêm</label><textarea id="extra">Nhân vật nữ Việt Nam khoảng 30 tuổi, tự nhiên, sang trọng. Giữ khuôn mặt, tóc, trang phục nhất quán. Video dọc 9:16, không phụ đề, không chữ.</textarea></div>
+</div>
+<button id="script" class="btn purple" type="button">✨ AI TỰ VIẾT KỊCH BẢN</button>
+</section>
+
+<section class="card">
+<h2>🧑‍🦰 ẢNH NHÂN VẬT THAM CHIẾU</h2>
+<div class="status info">Chọn 1 ảnh rõ mặt. Ảnh sẽ được tải lên PixVerse để tạo video.</div>
+<label style="margin-top:12px">Ảnh nhân vật</label>
+<input id="face" type="file" accept="image/png,image/jpeg,image/webp">
+<div id="faceStatus" class="status" hidden></div>
+<label style="margin-top:12px">Quy tắc giữ nhân vật</label>
+<textarea id="rules">Keep exactly the same Vietnamese woman from the reference image. Preserve the same face identity, facial proportions, hairstyle, skin tone, body proportions, outfit and overall appearance in every scene. Natural realistic human movement.</textarea>
+</section>
+
+<section class="card">
+<h2>⚡ PIXVERSE AUTO</h2>
+<p class="small">Quy trình: AI viết kịch bản → chia cảnh → tải ảnh → PixVerse tạo từng cảnh → chờ video hoàn tất.</p>
+<button id="health" class="btn gray" type="button">🔎 KIỂM TRA KẾT NỐI PIXVERSE</button>
+<button id="auto" class="btn orange" type="button">⚡ TẠO VIDEO TỰ ĐỘNG</button>
+<div id="status" class="status ok">Đang tải hệ thống...</div>
+</section>
+
+<section id="box" class="card" hidden>
+<h2>🎬 KỊCH BẢN + VIDEO</h2>
+<div id="summary" class="status info"></div>
+<div id="scenes"></div>
+</section>
+</main>
+<script src="./app.js?v=20260925" defer></script>
+</body>
+</html>
