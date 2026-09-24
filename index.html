@@ -133,17 +133,6 @@ textarea{
   line-height:1.5
 }
 
-.preview{
-  display:none;
-  margin-top:12px
-}
-
-.preview img{
-  max-width:180px;
-  border-radius:12px;
-  border:2px solid #ddd
-}
-
 .scene{
   border:1px solid #e5e7eb;
   border-radius:15px;
@@ -188,20 +177,6 @@ textarea{
   display:grid;
   grid-template-columns:1fr 1fr;
   gap:10px
-}
-
-.video-box{
-  margin-top:14px;
-  padding:12px;
-  background:#ecfdf5;
-  border-radius:12px
-}
-
-.video-box video{
-  width:100%;
-  max-width:600px;
-  border-radius:12px;
-  background:#000
 }
 
 .small{
@@ -388,32 +363,66 @@ textarea{
     <h2>👩 NHÂN VẬT GOOGLE FLOW</h2>
 
     <div class="notice">
+
       <b>THÙY MỸ PHẨM</b><br>
+
       Nhân vật đã tạo sẵn trong Google Flow.<br>
-      Giọng cố định: <b>Erinome</b> — Female, clear, mid pitch.<br>
-      Tool sẽ tự chèn <b>@THÙY MỸ PHẨM</b> vào Prompt Flow.
+
+      Giọng cố định:
+      <b>Erinome</b>
+      — Female, clear, mid pitch.<br>
+
+      Tool sẽ tự chèn
+      <b>@THÙY MỸ PHẨM</b>
+      vào Prompt Flow.
+
     </div>
+
 
     <div class="grid">
 
-      <div class="field">
-        <label>Tên nhân vật trong Flow</label>
-        <input id="flowCharacter" value="@THÙY MỸ PHẨM">
-      </div>
 
       <div class="field">
-        <label>Giọng</label>
-        <input id="flowVoice" value="Erinome — Female, clear, mid pitch" readonly>
+
+        <label>Tên nhân vật trong Flow</label>
+
+        <input
+          id="flowCharacter"
+          value="@THÙY MỸ PHẨM"
+        >
+
       </div>
+
+
+      <div class="field">
+
+        <label>Giọng</label>
+
+        <input
+          id="flowVoice"
+          value="Erinome — Female, clear, mid pitch"
+          readonly
+        >
+
+      </div>
+
 
       <div class="field full">
+
         <label>Thiết lập cố định</label>
-        <textarea id="flowCharacterRules" readonly>Giữ nhân vật nữ Việt Nam khoảng 30 tuổi, dịu dàng, tự tin, thân thiện, thanh lịch và tự nhiên. Khi tạo video trong Google Flow, dùng nhân vật @THÙY MỸ PHẨM. Với cảnh có thoại, dùng giọng Erinome và giữ phong cách nói tự nhiên, rõ ràng, không quá quảng cáo.</textarea>
+
+        <textarea
+          id="flowCharacterRules"
+          readonly
+        >Giữ nhân vật nữ Việt Nam khoảng 30 tuổi, dịu dàng, tự tin, thân thiện, thanh lịch và tự nhiên. Khi tạo video trong Google Flow, dùng nhân vật @THÙY MỸ PHẨM. Với cảnh có thoại, dùng giọng Erinome và giữ phong cách nói tự nhiên, rõ ràng, không quá quảng cáo.</textarea>
+
       </div>
+
 
     </div>
 
   </div>
+
 
 
   <!-- ========================= -->
@@ -430,12 +439,16 @@ textarea{
 
     <div id="scriptContent"></div>
 
+
     <button
       class="button green"
       id="allBtn"
     >
+
       📋 COPY TẤT CẢ PROMPT FLOW
+
     </button>
+
 
     <div
       id="globalStatus"
@@ -443,6 +456,9 @@ textarea{
     ></div>
 
   </div>
+
+
+</div>
 
 
 
@@ -456,13 +472,15 @@ textarea{
 const SCRIPT_API_URL =
   'https://script.google.com/macros/s/AKfycbzpIjAWninGb2hXQHezLSvRfd2G8TBFb8FRCjQkIjm-5Buyfbw6HjgTCl2sN9Stou2M/exec';
 
+
 /*
  * VIDEO:
  * Google Flow is used for Veo generation.
  * This page does NOT call the old Cloudflare Worker for Veo.
  */
-const FLOW_URL = 'https://flow.google.com/';
 
+const FLOW_URL =
+  'https://flow.google.com/';
 
 
 
@@ -492,6 +510,8 @@ function status(
   msg,
   type=''
 ){
+
+  if(!el) return;
 
   el.style.display='block';
 
@@ -563,10 +583,8 @@ function parseResult(v){
 
   }catch(e){
 
-
     const a =
       s.indexOf('{');
-
 
     const b =
       s.lastIndexOf('}');
@@ -597,123 +615,19 @@ function parseResult(v){
 
 
 /* =====================================================
-   THỜI LƯỢNG VIDEO
-   ===================================================== */
-
-function seconds(
-  v,
-  hasImage
-){
-
-  if(hasImage){
-
-    return 8;
-
-  }
-
-
-  let n =
-    parseInt(
-      String(v || ''),
-      10
-    );
-
-
-  return [4,6,8].includes(n)
-    ? n
-    : 8;
-
-}
-
-
-
-/* =====================================================
-   ẢNH NHÂN VẬT
-   ===================================================== */
-
-function imagePayload(){
-
-  return imageData
-
-    ? {
-
-        image:imageData,
-
-        image_mime_type:
-          imageMime
-
-      }
-
-    : {};
-
-}
-
-
-
-/* =====================================================
-   CHỌN ẢNH
-   ===================================================== */
-
-$('characterImage')
-.addEventListener(
-  'change',
-  e => {
-
-    const f =
-      e.target.files?.[0];
-
-
-    if(!f){
-
-      return;
-
-    }
-
-
-    imageMime =
-      f.type ||
-      'image/jpeg';
-
-
-    const r =
-      new FileReader();
-
-
-    r.onload = () => {
-
-      imageData =
-        String(
-          r.result || ''
-        );
-
-
-      $('previewImg').src =
-        imageData;
-
-
-      $('preview')
-        .style.display =
-        'block';
-
-    };
-
-
-    r.readAsDataURL(f);
-
-  }
-);
-
-
-
-/* =====================================================
    NÚT TẠO KỊCH BẢN
    ===================================================== */
 
-$('scriptBtn')
-.addEventListener(
-  'click',
-  generateScript
-);
+const scriptBtn = $('scriptBtn');
+
+if (scriptBtn) {
+
+  scriptBtn.addEventListener(
+    'click',
+    generateScript
+  );
+
+}
 
 
 
@@ -909,7 +823,6 @@ async function generateScript(){
 
   try{
 
-
     const d =
       await callGeminiJSONP({
 
@@ -990,7 +903,6 @@ async function generateScript(){
 
   }catch(e){
 
-
     status(
 
       $('scriptStatus'),
@@ -1070,34 +982,62 @@ function formatError(d){
 function buildFlowPrompt(scene){
 
   const character =
-    $('flowCharacter').value.trim() || '@THÙY MỸ PHẨM';
+    $('flowCharacter').value.trim() ||
+    '@THÙY MỸ PHẨM';
+
 
   const voice =
-    $('flowVoice').value.trim() || 'Erinome';
+    $('flowVoice').value.trim() ||
+    'Erinome';
+
 
   const base =
     scene.video_prompt ||
+
     scene.prompt_video ||
+
     scene.videoPrompt ||
+
     scene.visual_description ||
+
     '';
+
 
   const dialogue =
     scene.dialogue ||
+
     scene.voiceover ||
+
     '';
 
+
   return [
-    character + ' xuất hiện trong cảnh này.',
+
+    character +
+    ' xuất hiện trong cảnh này.',
+
     'Giữ ngoại hình nhân vật ổn định, tự nhiên, chân thực, nữ Việt Nam khoảng 30 tuổi, phong thái dịu dàng, thanh lịch và thân thiện.',
+
     base,
+
     dialogue
-      ? 'Cô ấy nói bằng tiếng Việt với giọng ' + voice + ': "' + dialogue + '"'
+      ? 'Cô ấy nói bằng tiếng Việt với giọng ' +
+        voice +
+        ': "' +
+        dialogue +
+        '"'
       : '',
+
     'Biểu cảm tự nhiên, chuyển động cơ thể nhẹ nhàng, ánh sáng chân thực, cinematic, video dọc 9:16.',
+
     'Không phụ đề, không chữ trên màn hình, không watermark.'
-  ].filter(Boolean).join('\n\n');
+
+  ]
+  .filter(Boolean)
+  .join('\n\n');
+
 }
+
 
 
 /* =====================================================
@@ -1106,89 +1046,217 @@ function buildFlowPrompt(scene){
 
 function renderScript(s){
 
-  $('scriptBox').style.display = 'block';
+  $('scriptBox').style.display =
+    'block';
 
-  const scenes = s.scenes || [];
+
+  const scenes =
+    s.scenes || [];
+
 
   $('scriptContent').innerHTML =
+
     '<div class="notice">' +
-      '<b>' + esc(s.title || 'Kịch bản') + '</b>' +
+
+      '<b>' +
+
+      esc(
+        s.title ||
+        'Kịch bản'
+      ) +
+
+      '</b>' +
+
       '<br>' +
+
       'Tổng thời lượng: ' +
-      esc(s.total_duration_seconds || '') +
+
+      esc(
+        s.total_duration_seconds ||
+        ''
+      ) +
+
       ' giây' +
+
       '<br><br>' +
+
       'Workflow: <b>Gemini → COPY PROMPT → Google Flow → Veo 3.1 Lite</b>' +
+
     '</div>' +
 
-    scenes.map((x,i) => {
 
-      const dialogue =
-        x.dialogue ||
-        x.voiceover ||
-        '';
+    scenes
+      .map(
+        (x,i) => {
 
-      const flowPrompt = buildFlowPrompt(x);
+          const dialogue =
 
-      return `
-        <div class="scene" id="scene-${i}">
+            x.dialogue ||
 
-          <div class="scene-head">
-            <div><b>🎬 Cảnh ${i+1}</b></div>
-            <span class="badge">
-              ${esc(x.duration_seconds || 8)} giây
-            </span>
-          </div>
+            x.voiceover ||
 
-          <div class="scene-row">
-            <div class="scene-label">Hình ảnh</div>
-            <div class="scene-content">
-              ${esc(
-                x.visual_description ||
-                x.image_prompt ||
-                x.prompt_image ||
-                ''
-              )}
+            '';
+
+
+          const flowPrompt =
+            buildFlowPrompt(x);
+
+
+          return `
+
+            <div
+              class="scene"
+              id="scene-${i}"
+            >
+
+              <div class="scene-head">
+
+                <div>
+
+                  <b>
+                    🎬 Cảnh ${i+1}
+                  </b>
+
+                </div>
+
+
+                <span class="badge">
+
+                  ${esc(
+                    x.duration_seconds ||
+                    8
+                  )}
+
+                  giây
+
+                </span>
+
+              </div>
+
+
+              <div class="scene-row">
+
+                <div class="scene-label">
+                  Hình ảnh
+                </div>
+
+
+                <div class="scene-content">
+
+                  ${esc(
+
+                    x.visual_description ||
+
+                    x.image_prompt ||
+
+                    x.prompt_image ||
+
+                    ''
+
+                  )}
+
+                </div>
+
+              </div>
+
+
+              <div class="scene-row">
+
+                <div class="scene-label">
+                  Lời thoại
+                </div>
+
+
+                <div class="scene-content">
+
+                  ${esc(
+                    dialogue
+                  )}
+
+                </div>
+
+              </div>
+
+
+              <div class="scene-row">
+
+                <div class="scene-label">
+                  🎥 Prompt Google Flow
+                </div>
+
+
+                <div class="scene-content">
+
+                  ${esc(
+                    flowPrompt
+                  )}
+
+                </div>
+
+              </div>
+
+
+              <div class="scene-actions">
+
+
+                <button
+
+                  class="button orange"
+
+                  onclick="copyFlowPrompt(${i})"
+
+                >
+
+                  📋 COPY PROMPT FLOW
+
+                </button>
+
+
+                <button
+
+                  class="button"
+
+                  onclick="openFlow()"
+
+                >
+
+                  🚀 MỞ GOOGLE FLOW
+
+                </button>
+
+
+              </div>
+
+
+              <div
+                id="result-${i}"
+              ></div>
+
+
             </div>
-          </div>
 
-          <div class="scene-row">
-            <div class="scene-label">Lời thoại</div>
-            <div class="scene-content">${esc(dialogue)}</div>
-          </div>
+          `;
 
-          <div class="scene-row">
-            <div class="scene-label">🎥 Prompt Google Flow</div>
-            <div class="scene-content">${esc(flowPrompt)}</div>
-          </div>
+        }
 
-          <div class="scene-actions">
-            <button
-              class="button orange"
-              onclick="copyFlowPrompt(${i})"
-            >
-              📋 COPY PROMPT FLOW
-            </button>
+      )
 
-            <button
-              class="button"
-              onclick="openFlow()"
-            >
-              🚀 MỞ GOOGLE FLOW
-            </button>
-          </div>
+      .join('');
 
-          <div id="result-${i}"></div>
-
-        </div>
-      `;
-    }).join('');
 
   window.scrollTo({
-    top: $('scriptBox').offsetTop - 10,
-    behavior: 'smooth'
+
+    top:
+      $('scriptBox')
+        .offsetTop - 10,
+
+    behavior:
+      'smooth'
+
   });
+
 }
+
 
 
 /* =====================================================
@@ -1197,20 +1265,39 @@ function renderScript(s){
 
 function copyFlowPrompt(i){
 
-  const scene = currentScript?.scenes?.[i];
+  const scene =
+    currentScript
+      ?.scenes
+      ?. [i];
 
-  if(!scene) return;
 
-  const prompt = buildFlowPrompt(scene);
+  if(!scene)
+    return;
 
-  navigator.clipboard?.writeText(prompt);
+
+  const prompt =
+    buildFlowPrompt(
+      scene
+    );
+
+
+  navigator.clipboard?.writeText(
+    prompt
+  );
+
 
   status(
+
     $('result-'+i),
+
     '📋 Đã copy Prompt Flow. Bây giờ mở Google Flow và dán vào ô tạo video.',
+
     'success'
+
   );
+
 }
+
 
 
 /* =====================================================
@@ -1218,45 +1305,109 @@ function copyFlowPrompt(i){
    ===================================================== */
 
 function openFlow(){
-  window.open(FLOW_URL, '_blank');
+
+  window.open(
+    FLOW_URL,
+    '_blank'
+  );
+
 }
+
 
 
 /* =====================================================
    COPY TẤT CẢ PROMPT
    ===================================================== */
 
-$('allBtn').addEventListener('click', async()=>{
+const allBtn =
+  $('allBtn');
 
-  if(!currentScript?.scenes?.length) return;
 
-  const all = currentScript.scenes.map((scene,i)=>{
-    return '===== CẢNH ' + (i+1) + ' =====\n\n' +
-      buildFlowPrompt(scene);
-  }).join('\n\n');
+if(allBtn)
+allBtn.addEventListener(
+  'click',
+  async()=>{
 
-  try{
-    await navigator.clipboard.writeText(all);
+    if(
+      !currentScript
+        ?.scenes
+        ?.length
+    ){
 
-    status(
-      $('globalStatus'),
-      '✅ Đã copy toàn bộ Prompt Flow của ' +
-      currentScript.scenes.length +
-      ' cảnh.',
-      'success'
-    );
+      return;
 
-  }catch(e){
+    }
 
-    status(
-      $('globalStatus'),
-      '❌ Không thể copy tự động. Hãy dùng nút COPY PROMPT từng cảnh.',
-      'error'
-    );
+
+    const all =
+      currentScript
+        .scenes
+        .map(
+          (scene,i)=>{
+
+            return (
+
+              '===== CẢNH ' +
+              (i+1) +
+              ' =====\n\n' +
+
+              buildFlowPrompt(
+                scene
+              )
+
+            );
+
+          }
+        )
+        .join(
+          '\n\n'
+        );
+
+
+    try{
+
+      await navigator
+        .clipboard
+        .writeText(
+          all
+        );
+
+
+      status(
+
+        $('globalStatus'),
+
+        '✅ Đã copy toàn bộ Prompt Flow của ' +
+
+        currentScript
+          .scenes
+          .length +
+
+        ' cảnh.',
+
+        'success'
+
+      );
+
+
+    }catch(e){
+
+      status(
+
+        $('globalStatus'),
+
+        '❌ Không thể copy tự động. Hãy dùng nút COPY PROMPT từng cảnh.',
+
+        'error'
+
+      );
+
+    }
 
   }
 
-});
+);
+
 
 </script>
 
