@@ -1,60 +1,1459 @@
 <!DOCTYPE html>
 <html lang="vi">
+
 <head>
+
 <meta charset="UTF-8">
+
 <meta name="viewport" content="width=device-width,initial-scale=1.0">
+
 <title>PHƯƠNG THÙY AI VIDEO</title>
+
 <style>
-*{box-sizing:border-box}body{margin:0;font-family:Arial,sans-serif;background:#f5f6fa;color:#222}.container{max-width:1100px;margin:auto;padding:24px 16px 60px}.header,.card{background:#fff;border-radius:18px;padding:22px;margin-bottom:18px;box-shadow:0 5px 20px rgba(0,0,0,.07)}.header{background:linear-gradient(135deg,#7c3aed,#ec4899);color:#fff}.header h1{margin:0 0 8px}.grid{display:grid;grid-template-columns:1fr 1fr;gap:15px}.full{grid-column:1/-1}.field{display:flex;flex-direction:column;gap:7px}label{font-weight:700}input,select,textarea{width:100%;padding:12px;border:1px solid #ddd;border-radius:10px;font-size:15px}textarea{min-height:100px}.button{width:100%;border:0;border-radius:12px;padding:14px;color:#fff;font-weight:700;font-size:16px;cursor:pointer;background:linear-gradient(135deg,#7c3aed,#ec4899);margin-top:10px}.button:disabled{opacity:.55;cursor:not-allowed}.green{background:#16a34a}.orange{background:#ea580c}.status{display:none;margin-top:14px;padding:13px;border-radius:10px;background:#f3f4f6;line-height:1.55}.success{background:#ecfdf5;border:1px solid #bbf7d0}.error{background:#fef2f2;border:1px solid #fecaca}.notice{padding:12px;border-radius:10px;background:#fff7ed;border-left:4px solid #f97316;line-height:1.5}.preview{display:none;margin-top:12px}.preview img{max-width:180px;border-radius:12px;border:2px solid #ddd}.scene{border:1px solid #e5e7eb;border-radius:15px;padding:16px;margin:14px 0;background:#fafafa}.scene-head{display:flex;justify-content:space-between;gap:10px}.badge{background:#ede9fe;color:#6d28d9;padding:5px 9px;border-radius:20px;font-size:12px;font-weight:700}.scene-row{margin-top:10px}.scene-label{font-weight:700;margin-bottom:4px}.scene-content{background:#fff;border:1px solid #eee;border-radius:8px;padding:10px;white-space:pre-wrap}.scene-actions{display:grid;grid-template-columns:1fr 1fr;gap:10px}.video-box{margin-top:14px;padding:12px;background:#ecfdf5;border-radius:12px}.video-box video{width:100%;max-width:600px;border-radius:12px;background:#000}.small{font-size:13px;color:#666}@media(max-width:700px){.grid{grid-template-columns:1fr}.full{grid-column:auto}.scene-actions{grid-template-columns:1fr}}
+
+*{
+  box-sizing:border-box
+}
+
+body{
+  margin:0;
+  font-family:Arial,sans-serif;
+  background:#f5f6fa;
+  color:#222
+}
+
+.container{
+  max-width:1100px;
+  margin:auto;
+  padding:24px 16px 60px
+}
+
+.header,
+.card{
+  background:#fff;
+  border-radius:18px;
+  padding:22px;
+  margin-bottom:18px;
+  box-shadow:0 5px 20px rgba(0,0,0,.07)
+}
+
+.header{
+  background:linear-gradient(135deg,#7c3aed,#ec4899);
+  color:#fff
+}
+
+.header h1{
+  margin:0 0 8px
+}
+
+.grid{
+  display:grid;
+  grid-template-columns:1fr 1fr;
+  gap:15px
+}
+
+.full{
+  grid-column:1/-1
+}
+
+.field{
+  display:flex;
+  flex-direction:column;
+  gap:7px
+}
+
+label{
+  font-weight:700
+}
+
+input,
+select,
+textarea{
+  width:100%;
+  padding:12px;
+  border:1px solid #ddd;
+  border-radius:10px;
+  font-size:15px
+}
+
+textarea{
+  min-height:100px
+}
+
+.button{
+  width:100%;
+  border:0;
+  border-radius:12px;
+  padding:14px;
+  color:#fff;
+  font-weight:700;
+  font-size:16px;
+  cursor:pointer;
+  background:linear-gradient(135deg,#7c3aed,#ec4899);
+  margin-top:10px
+}
+
+.button:disabled{
+  opacity:.55;
+  cursor:not-allowed
+}
+
+.green{
+  background:#16a34a
+}
+
+.orange{
+  background:#ea580c
+}
+
+.status{
+  display:none;
+  margin-top:14px;
+  padding:13px;
+  border-radius:10px;
+  background:#f3f4f6;
+  line-height:1.55
+}
+
+.success{
+  background:#ecfdf5;
+  border:1px solid #bbf7d0
+}
+
+.error{
+  background:#fef2f2;
+  border:1px solid #fecaca
+}
+
+.notice{
+  padding:12px;
+  border-radius:10px;
+  background:#fff7ed;
+  border-left:4px solid #f97316;
+  line-height:1.5
+}
+
+.preview{
+  display:none;
+  margin-top:12px
+}
+
+.preview img{
+  max-width:180px;
+  border-radius:12px;
+  border:2px solid #ddd
+}
+
+.scene{
+  border:1px solid #e5e7eb;
+  border-radius:15px;
+  padding:16px;
+  margin:14px 0;
+  background:#fafafa
+}
+
+.scene-head{
+  display:flex;
+  justify-content:space-between;
+  gap:10px
+}
+
+.badge{
+  background:#ede9fe;
+  color:#6d28d9;
+  padding:5px 9px;
+  border-radius:20px;
+  font-size:12px;
+  font-weight:700
+}
+
+.scene-row{
+  margin-top:10px
+}
+
+.scene-label{
+  font-weight:700;
+  margin-bottom:4px
+}
+
+.scene-content{
+  background:#fff;
+  border:1px solid #eee;
+  border-radius:8px;
+  padding:10px;
+  white-space:pre-wrap
+}
+
+.scene-actions{
+  display:grid;
+  grid-template-columns:1fr 1fr;
+  gap:10px
+}
+
+.video-box{
+  margin-top:14px;
+  padding:12px;
+  background:#ecfdf5;
+  border-radius:12px
+}
+
+.video-box video{
+  width:100%;
+  max-width:600px;
+  border-radius:12px;
+  background:#000
+}
+
+.small{
+  font-size:13px;
+  color:#666
+}
+
+@media(max-width:700px){
+
+  .grid{
+    grid-template-columns:1fr
+  }
+
+  .full{
+    grid-column:auto
+  }
+
+  .scene-actions{
+    grid-template-columns:1fr
+  }
+
+}
+
 </style>
+
 </head>
+
+
 <body>
+
 <div class="container">
-<div class="header"><h1>PHƯƠNG THÙY AI VIDEO</h1><p>Một câu lệnh → AI viết kịch bản → chia cảnh → ảnh nhân vật tham chiếu → Veo 3.1.</p></div>
 
-<div class="card">
-<h2>✨ AI TỰ VIẾT KỊCH BẢN</h2>
-<div class="grid">
-<div class="field full"><label>Chủ đề / sản phẩm</label><input id="topic" placeholder="Ví dụ: Kem chống nắng ADA, món ăn dưỡng nhan, câu chuyện Spa..."></div>
-<div class="field"><label>Thời lượng</label><select id="duration"><option>15 giây</option><option selected>30 giây</option><option>45 giây</option><option>60 giây</option><option>90 giây</option></select></div>
-<div class="field"><label>Phong cách</label><select id="style"><option>TikTok bán hàng</option><option>Vlog đời thường</option><option>Review sản phẩm</option><option>Câu chuyện hài hước</option><option>Luxury cinematic</option><option>Chuyên gia tư vấn</option></select></div>
-<div class="field"><label>Đối tượng</label><input id="audience" value="Phụ nữ Việt Nam 25-50 tuổi"></div>
-<div class="field"><label>Giọng video</label><select id="voice"><option>Nữ Việt Nam - nhẹ nhàng</option><option>Nữ Việt Nam - trẻ trung</option><option>Nữ Việt Nam - sang trọng</option><option>Nữ Việt Nam - thân thiện</option></select></div>
-<div class="field full"><label>Yêu cầu thêm</label><textarea id="extra" placeholder="Ví dụ: không phóng đại công dụng, CTA cuối video..."></textarea></div>
-</div>
-<button class="button" id="scriptBtn">✨ AI TỰ VIẾT KỊCH BẢN</button>
-<div id="scriptStatus" class="status"></div>
+
+  <div class="header">
+
+    <h1>PHƯƠNG THÙY AI VIDEO</h1>
+
+    <p>
+      Một câu lệnh → AI viết kịch bản → chia cảnh →
+      ảnh nhân vật tham chiếu → Veo 3.1.
+    </p>
+
+  </div>
+
+
+  <!-- ========================= -->
+  <!-- KHU VỰC TẠO KỊCH BẢN -->
+  <!-- ========================= -->
+
+  <div class="card">
+
+    <h2>✨ AI TỰ VIẾT KỊCH BẢN</h2>
+
+    <div class="grid">
+
+
+      <div class="field full">
+
+        <label>Chủ đề / sản phẩm</label>
+
+        <input
+          id="topic"
+          placeholder="Ví dụ: Kem chống nắng ADA, món ăn dưỡng nhan, câu chuyện Spa..."
+        >
+
+      </div>
+
+
+      <div class="field">
+
+        <label>Thời lượng</label>
+
+        <select id="duration">
+
+          <option>15 giây</option>
+
+          <option selected>30 giây</option>
+
+          <option>45 giây</option>
+
+          <option>60 giây</option>
+
+          <option>90 giây</option>
+
+        </select>
+
+      </div>
+
+
+      <div class="field">
+
+        <label>Phong cách</label>
+
+        <select id="style">
+
+          <option>TikTok bán hàng</option>
+
+          <option>Vlog đời thường</option>
+
+          <option>Review sản phẩm</option>
+
+          <option>Câu chuyện hài hước</option>
+
+          <option>Luxury cinematic</option>
+
+          <option>Chuyên gia tư vấn</option>
+
+        </select>
+
+      </div>
+
+
+      <div class="field">
+
+        <label>Đối tượng</label>
+
+        <input
+          id="audience"
+          value="Phụ nữ Việt Nam 25-50 tuổi"
+        >
+
+      </div>
+
+
+      <div class="field">
+
+        <label>Giọng video</label>
+
+        <select id="voice">
+
+          <option>Nữ Việt Nam - nhẹ nhàng</option>
+
+          <option>Nữ Việt Nam - trẻ trung</option>
+
+          <option>Nữ Việt Nam - sang trọng</option>
+
+          <option>Nữ Việt Nam - thân thiện</option>
+
+        </select>
+
+      </div>
+
+
+      <div class="field full">
+
+        <label>Yêu cầu thêm</label>
+
+        <textarea
+          id="extra"
+          placeholder="Ví dụ: không phóng đại công dụng, CTA cuối video..."
+        ></textarea>
+
+      </div>
+
+
+    </div>
+
+
+    <button
+      class="button"
+      id="scriptBtn"
+    >
+      ✨ AI TỰ VIẾT KỊCH BẢN
+    </button>
+
+
+    <div
+      id="scriptStatus"
+      class="status"
+    ></div>
+
+  </div>
+
+
+
+  <!-- ========================= -->
+  <!-- NHÂN VẬT -->
+  <!-- ========================= -->
+
+  <div class="card">
+
+    <h2>👤 NHÂN VẬT THAM CHIẾU</h2>
+
+    <div class="notice">
+
+      Tải 1 ảnh rõ khuôn mặt nhân vật.
+      Khi có ảnh tham chiếu, hệ thống sẽ tự dùng
+      8 giây cho cảnh Veo.
+
+    </div>
+
+    <br>
+
+    <label>Ảnh nhân vật</label>
+
+    <input
+      type="file"
+      id="characterImage"
+      accept="image/png,image/jpeg,image/webp"
+    >
+
+
+    <div
+      id="preview"
+      class="preview"
+    >
+
+      <b>Ảnh đã chọn:</b>
+
+      <br>
+
+      <img id="previewImg">
+
+    </div>
+
+  </div>
+
+
+
+  <!-- ========================= -->
+  <!-- KỊCH BẢN -->
+  <!-- ========================= -->
+
+  <div
+    id="scriptBox"
+    class="card"
+    style="display:none"
+  >
+
+    <h2>🎬 KỊCH BẢN HOÀN CHỈNH</h2>
+
+    <div id="scriptContent"></div>
+
+
+    <button
+      class="button green"
+      id="allBtn"
+    >
+      🚀 TẠO TẤT CẢ CẢNH VIDEO
+    </button>
+
+
+    <div
+      id="globalStatus"
+      class="status"
+    ></div>
+
+  </div>
+
+
 </div>
 
-<div class="card">
-<h2>👤 NHÂN VẬT THAM CHIẾU</h2>
-<div class="notice">Tải 1 ảnh rõ khuôn mặt nhân vật. Khi có ảnh tham chiếu, hệ thống sẽ tự dùng 8 giây cho cảnh Veo.</div><br>
-<label>Ảnh nhân vật</label><input type="file" id="characterImage" accept="image/png,image/jpeg,image/webp">
-<div id="preview" class="preview"><b>Ảnh đã chọn:</b><br><img id="previewImg"></div>
-</div>
 
-<div id="scriptBox" class="card" style="display:none"><h2>🎬 KỊCH BẢN HOÀN CHỈNH</h2><div id="scriptContent"></div><button class="button green" id="allBtn">🚀 TẠO TẤT CẢ CẢNH VIDEO</button><div id="globalStatus" class="status"></div></div>
-</div>
+
 <script>
-const API_URL='https://phuong-thuy-ai-video.phuongthuy-lotteria.workers.dev';
-let currentScript=null, imageData='', imageMime='image/jpeg';
-const $=id=>document.getElementById(id);
-function status(el,msg,type=''){el.style.display='block';el.className='status '+type;el.innerHTML=msg}
-function esc(v){return String(v??'').replace(/&/g,'&amp;').replace(/</g,'&lt;').replace(/>/g,'&gt;').replace(/"/g,'&quot;').replace(/'/g,'&#039;')}
-function parseResult(v){if(typeof v==='object')return v;let s=String(v||'').trim().replace(/^```json\s*/i,'').replace(/^```\s*/i,'').replace(/\s*```$/i,'');try{return JSON.parse(s)}catch(e){const a=s.indexOf('{'),b=s.lastIndexOf('}');if(a>=0&&b>a){try{return JSON.parse(s.slice(a,b+1))}catch(x){}}return null}}
-function seconds(v,hasImage){if(hasImage)return 8;let n=parseInt(String(v||''),10);return [4,6,8].includes(n)?n:8}
-function imagePayload(){return imageData?{image:imageData,image_mime_type:imageMime}:{} }
 
-$('characterImage').addEventListener('change',e=>{const f=e.target.files?.[0];if(!f)return;imageMime=f.type||'image/jpeg';const r=new FileReader();r.onload=()=>{imageData=String(r.result||'');$('previewImg').src=imageData;$('preview').style.display='block'};r.readAsDataURL(f)});
 
-$('scriptBtn').addEventListener('click',generateScript);
-async function generateScript(){const topic=$('topic').value.trim();if(!topic){alert('Chị hãy nhập chủ đề hoặc sản phẩm.');return}const btn=$('scriptBtn');btn.disabled=true;status($('scriptStatus'),'⏳ AI đang viết kịch bản...');try{const r=await fetch(API_URL+'/generate-script',{method:'POST',headers:{'Content-Type':'application/json'},body:JSON.stringify({topic,duration:$('duration').value,style:$('style').value,audience:$('audience').value,voice:$('voice').value,extra:$('extra').value})});const d=await r.json();if(!r.ok||!d.ok)throw new Error(formatError(d));const parsed=parseResult(d.result);if(!parsed||!Array.isArray(parsed.scenes))throw new Error('AI đã trả về dữ liệu nhưng không có danh sách scenes hợp lệ.');currentScript=parsed;renderScript(parsed);status($('scriptStatus'),'✅ Đã tạo kịch bản và chia '+parsed.scenes.length+' cảnh.','success')}catch(e){status($('scriptStatus'),'❌ '+esc(e.message),'error')}finally{btn.disabled=false}}
-function formatError(d){if(!d)return'Không nhận được phản hồi từ Worker.';return d.gemini_message||d.message||d.error||('HTTP '+(d.http_status||''))}
-function renderScript(s){$('scriptBox').style.display='block';const scenes=s.scenes||[];$('scriptContent').innerHTML='<div class="notice"><b>'+esc(s.title||'Kịch bản')+'</b><br>Tổng thời lượng: '+esc(s.total_duration_seconds||'')+' giây</div>'+scenes.map((x,i)=>{const prompt=x.video_prompt||x.prompt_video||x.videoPrompt||x.visual_description||'';const dialogue=x.dialogue||x.voiceover||'';return '<div class="scene" id="scene-'+i+'"><div class="scene-head"><div><b>🎬 Cảnh '+(i+1)+'</b></div><span class="badge">'+esc(x.duration_seconds||8)+' giây</span></div><div class="scene-row"><div class="scene-label">Hình ảnh</div><div class="scene-content">'+esc(x.visual_description||x.image_prompt||x.prompt_image||'')+'</div></div><div class="scene-row"><div class="scene-label">Lời thoại</div><div class="scene-content">'+esc(dialogue)+'</div></div><div class="scene-row"><div class="scene-label">Prompt video</div><div class="scene-content">'+esc(prompt)+'</div></div><div class="scene-actions"><button class="button orange" onclick="createScene('+i+')">🎬 TẠO CẢNH NÀY</button><button class="button" onclick="copyPrompt('+i+')">📋 COPY PROMPT</button></div><div id="result-'+i+'"></div></div>'}).join('');window.scrollTo({top:$('scriptBox').offsetTop-10,behavior:'smooth'})}
-function copyPrompt(i){const x=currentScript.scenes[i];const p=x.video_prompt||x.prompt_video||x.videoPrompt||x.visual_description||'';navigator.clipboard?.writeText(p);status($('result-'+i),'📋 Đã copy prompt.','success')}
-window.createScene=async function(i){const scene=currentScript?.scenes?.[i];if(!scene)return;const result=$('result-'+i);const p=scene.video_prompt||scene.prompt_video||scene.videoPrompt||scene.visual_description||'';const duration=seconds(scene.duration_seconds,imageData);result.innerHTML='<div class="status" style="display:block">⏳ Đang gửi cảnh '+(i+1)+' cho Veo... ('+duration+' giây)</div>';try{const payload={prompt:p,prompt_video:p,aspect_ratio:'9:16',duration_seconds:duration,...imagePayload()};const r=await fetch(API_URL+'/generate-video',{method:'POST',headers:{'Content-Type':'application/json'},body:JSON.stringify(payload)});const d=await r.json();if(!r.ok||!d.ok)throw new Error(formatError(d)+' '+(d.details?.error?.message||''));const op=d.operation_name||d.operationName||d.operation||'';if(!op)throw new Error('Worker không trả về operation.');sceneOperations[i]=op;await pollVideo(i,op)}catch(e){result.innerHTML='<div class="status error" style="display:block">❌ '+esc(e.message)+'</div>'}};
-async function pollVideo(i,op){const result=$('result-'+i);for(let n=0;n<90;n++){await new Promise(r=>setTimeout(r,5000));const r=await fetch(API_URL+'/video-status?operation='+encodeURIComponent(op));const d=await r.json();if(!r.ok||!d.ok)throw new Error(formatError(d));if(d.status==='processing'||d.done===false){result.innerHTML='<div class="status" style="display:block">⏳ Veo đang tạo video... '+Math.min(n+1,90)+'/90</div>';continue}if(d.status==='completed'&&d.video_uri){const src=API_URL+'/video?uri='+encodeURIComponent(d.video_uri);result.innerHTML='<div class="video-box"><b>✅ Cảnh '+(i+1)+' đã tạo xong!</b><br><video controls playsinline src="'+esc(src)+'"></video><br><a href="'+esc(src)+'" target="_blank">Mở video</a></div>';return}throw new Error(d.gemini_message||d.error||'Veo không trả về video.')}throw new Error('Veo tạo quá lâu. Hãy thử lại cảnh này.')}
-$('allBtn').addEventListener('click',async()=>{if(!currentScript?.scenes?.length)return;const btn=$('allBtn');btn.disabled=true;status($('globalStatus'),'🚀 Bắt đầu tạo '+currentScript.scenes.length+' cảnh. Mỗi cảnh sẽ tự chờ Veo hoàn tất...');try{for(let i=0;i<currentScript.scenes.length;i++){status($('globalStatus'),'🎬 Đang tạo cảnh '+(i+1)+'/'+currentScript.scenes.length+'...');await window.createScene(i)}status($('globalStatus'),'✅ Đã gửi và xử lý xong quy trình cho tất cả cảnh.','success')}catch(e){status($('globalStatus'),'❌ '+esc(e.message),'error')}finally{btn.disabled=false}});
+/* =====================================================
+   API
+   ===================================================== */
+
+
+/*
+  APPS SCRIPT
+  Dùng riêng cho việc tạo kịch bản Gemini
+*/
+
+const SCRIPT_API_URL =
+  'https://script.google.com/macros/s/AKfycbzpIjAWninGb2hXQHezLSvRfd2G8TBFb8FRCjQkIjm-5Buyfbw6HjgTCl2sN9Stou2M/exec';
+
+
+/*
+  CLOUDFLARE WORKER
+  Giữ lại cho phần tạo video Veo
+*/
+
+const API_URL =
+  'https://phuong-thuy-ai-video.phuongthuy-lotteria.workers.dev';
+
+
+
+/* =====================================================
+   BIẾN HỆ THỐNG
+   ===================================================== */
+
+let currentScript = null;
+
+let imageData = '';
+
+let imageMime = 'image/jpeg';
+
+let sceneOperations = {};
+
+
+
+/* =====================================================
+   HÀM TIỆN ÍCH
+   ===================================================== */
+
+const $ = id =>
+  document.getElementById(id);
+
+
+
+function status(
+  el,
+  msg,
+  type=''
+){
+
+  el.style.display='block';
+
+  el.className='status '+type;
+
+  el.innerHTML=msg;
+
+}
+
+
+
+function esc(v){
+
+  return String(v ?? '')
+    .replace(/&/g,'&amp;')
+    .replace(/</g,'&lt;')
+    .replace(/>/g,'&gt;')
+    .replace(/"/g,'&quot;')
+    .replace(/'/g,'&#039;');
+
+}
+
+
+
+function parseResult(v){
+
+  if(typeof v==='object'){
+    return v;
+  }
+
+  let s=String(v||'')
+    .trim()
+    .replace(/^```json\s*/i,'')
+    .replace(/^```\s*/i,'')
+    .replace(/\s*```$/i,'');
+
+
+  try{
+
+    return JSON.parse(s);
+
+  }catch(e){
+
+
+    const a=s.indexOf('{');
+
+    const b=s.lastIndexOf('}');
+
+
+    if(a>=0 && b>a){
+
+      try{
+
+        return JSON.parse(
+          s.slice(a,b+1)
+        );
+
+      }catch(x){}
+
+    }
+
+
+    return null;
+
+  }
+
+}
+
+
+
+function seconds(
+  v,
+  hasImage
+){
+
+  if(hasImage){
+    return 8;
+  }
+
+
+  let n=parseInt(
+    String(v||''),
+    10
+  );
+
+
+  return [4,6,8].includes(n)
+    ? n
+    : 8;
+
+}
+
+
+
+function imagePayload(){
+
+  return imageData
+    ? {
+        image:imageData,
+        image_mime_type:imageMime
+      }
+    : {};
+
+}
+
+
+
+/* =====================================================
+   ẢNH NHÂN VẬT
+   ===================================================== */
+
+$('characterImage')
+.addEventListener(
+  'change',
+  e=>{
+
+    const f=e.target.files?.[0];
+
+    if(!f){
+      return;
+    }
+
+
+    imageMime =
+      f.type || 'image/jpeg';
+
+
+    const r =
+      new FileReader();
+
+
+    r.onload=()=>{
+
+      imageData=
+        String(r.result||'');
+
+
+      $('previewImg').src=
+        imageData;
+
+
+      $('preview').style.display=
+        'block';
+
+    };
+
+
+    r.readAsDataURL(f);
+
+  }
+);
+
+
+
+/* =====================================================
+   NÚT TẠO KỊCH BẢN
+   ===================================================== */
+
+$('scriptBtn')
+.addEventListener(
+  'click',
+  generateScript
+);
+
+
+
+/* =====================================================
+   TẠO KỊCH BẢN
+   APPS SCRIPT → GEMINI
+   ===================================================== */
+
+async function generateScript(){
+
+  const topic =
+    $('topic').value.trim();
+
+
+  if(!topic){
+
+    alert(
+      'Chị hãy nhập chủ đề hoặc sản phẩm.'
+    );
+
+    return;
+
+  }
+
+
+  const btn =
+    $('scriptBtn');
+
+
+  btn.disabled=true;
+
+
+  status(
+    $('scriptStatus'),
+    '⏳ AI đang viết kịch bản bằng Gemini...'
+  );
+
+
+  try{
+
+
+    const r =
+      await fetch(
+        SCRIPT_API_URL,
+        {
+
+          method:'POST',
+
+          headers:{
+            'Content-Type':
+              'application/json'
+          },
+
+          body:JSON.stringify({
+
+            topic:topic,
+
+            duration:
+              $('duration').value,
+
+            style:
+              $('style').value,
+
+            audience:
+              $('audience').value,
+
+            voice:
+              $('voice').value,
+
+            extra:
+              $('extra').value
+
+          })
+
+        }
+      );
+
+
+    const d =
+      await r.json();
+
+
+    if(!r.ok || !d.ok){
+
+      throw new Error(
+        formatError(d)
+      );
+
+    }
+
+
+    const parsed =
+      parseResult(d.result);
+
+
+    if(
+      !parsed ||
+      !Array.isArray(parsed.scenes)
+    ){
+
+      throw new Error(
+        'AI đã trả về dữ liệu nhưng không có danh sách scenes hợp lệ.'
+      );
+
+    }
+
+
+    currentScript =
+      parsed;
+
+
+    renderScript(
+      parsed
+    );
+
+
+    status(
+      $('scriptStatus'),
+
+      '✅ Đã tạo kịch bản và chia ' +
+      parsed.scenes.length +
+      ' cảnh.',
+
+      'success'
+    );
+
+
+  }catch(e){
+
+
+    status(
+      $('scriptStatus'),
+
+      '❌ ' +
+      esc(e.message),
+
+      'error'
+    );
+
+
+  }finally{
+
+    btn.disabled=false;
+
+  }
+
+}
+
+
+
+/* =====================================================
+   FORMAT ERROR
+   ===================================================== */
+
+function formatError(d){
+
+  if(!d){
+
+    return 'Không nhận được phản hồi từ máy chủ.';
+
+  }
+
+
+  return (
+    d.gemini_message ||
+    d.message ||
+    d.error ||
+    ('HTTP '+(d.http_status||''))
+  );
+
+}
+
+
+
+/* =====================================================
+   HIỂN THỊ KỊCH BẢN
+   ===================================================== */
+
+function renderScript(s){
+
+  $('scriptBox')
+    .style.display='block';
+
+
+  const scenes =
+    s.scenes || [];
+
+
+  $('scriptContent').innerHTML =
+
+    '<div class="notice">' +
+
+      '<b>' +
+      esc(
+        s.title || 'Kịch bản'
+      ) +
+      '</b>' +
+
+      '<br>' +
+
+      'Tổng thời lượng: ' +
+
+      esc(
+        s.total_duration_seconds || ''
+      ) +
+
+      ' giây' +
+
+    '</div>' +
+
+
+    scenes
+    .map(
+      (x,i)=>{
+
+
+        const prompt =
+          x.video_prompt ||
+          x.prompt_video ||
+          x.videoPrompt ||
+          x.visual_description ||
+          '';
+
+
+        const dialogue =
+          x.dialogue ||
+          x.voiceover ||
+          '';
+
+
+        return `
+
+          <div
+            class="scene"
+            id="scene-${i}"
+          >
+
+            <div class="scene-head">
+
+              <div>
+
+                <b>
+                  🎬 Cảnh ${i+1}
+                </b>
+
+              </div>
+
+
+              <span class="badge">
+
+                ${esc(
+                  x.duration_seconds || 8
+                )}
+
+                giây
+
+              </span>
+
+            </div>
+
+
+            <div class="scene-row">
+
+              <div class="scene-label">
+                Hình ảnh
+              </div>
+
+              <div class="scene-content">
+
+                ${esc(
+                  x.visual_description ||
+                  x.image_prompt ||
+                  x.prompt_image ||
+                  ''
+                )}
+
+              </div>
+
+            </div>
+
+
+            <div class="scene-row">
+
+              <div class="scene-label">
+                Lời thoại
+              </div>
+
+              <div class="scene-content">
+
+                ${esc(dialogue)}
+
+              </div>
+
+            </div>
+
+
+            <div class="scene-row">
+
+              <div class="scene-label">
+                Prompt video
+              </div>
+
+              <div class="scene-content">
+
+                ${esc(prompt)}
+
+              </div>
+
+            </div>
+
+
+            <div class="scene-actions">
+
+              <button
+                class="button orange"
+                onclick="createScene(${i})"
+              >
+
+                🎬 TẠO CẢNH NÀY
+
+              </button>
+
+
+              <button
+                class="button"
+                onclick="copyPrompt(${i})"
+              >
+
+                📋 COPY PROMPT
+
+              </button>
+
+            </div>
+
+
+            <div
+              id="result-${i}"
+            ></div>
+
+
+          </div>
+
+        `;
+
+      }
+    )
+    .join('');
+
+
+  window.scrollTo({
+
+    top:
+      $('scriptBox').offsetTop - 10,
+
+    behavior:'smooth'
+
+  });
+
+}
+
+
+
+/* =====================================================
+   COPY PROMPT
+   ===================================================== */
+
+function copyPrompt(i){
+
+  const x =
+    currentScript.scenes[i];
+
+
+  const p =
+    x.video_prompt ||
+    x.prompt_video ||
+    x.videoPrompt ||
+    x.visual_description ||
+    '';
+
+
+  navigator.clipboard?.writeText(p);
+
+
+  status(
+    $('result-'+i),
+    '📋 Đã copy prompt.',
+    'success'
+  );
+
+}
+
+
+
+/* =====================================================
+   TẠO 1 CẢNH VIDEO
+   CLOUDFLARE → VEO
+   ===================================================== */
+
+window.createScene =
+async function(i){
+
+  const scene =
+    currentScript?.scenes?.[i];
+
+
+  if(!scene){
+    return;
+  }
+
+
+  const result =
+    $('result-'+i);
+
+
+  const p =
+    scene.video_prompt ||
+    scene.prompt_video ||
+    scene.videoPrompt ||
+    scene.visual_description ||
+    '';
+
+
+  const duration =
+    seconds(
+      scene.duration_seconds,
+      imageData
+    );
+
+
+  result.innerHTML =
+
+    '<div class="status" style="display:block">' +
+
+      '⏳ Đang gửi cảnh ' +
+      (i+1) +
+      ' cho Veo... (' +
+      duration +
+      ' giây)' +
+
+    '</div>';
+
+
+  try{
+
+
+    const payload={
+
+      prompt:p,
+
+      prompt_video:p,
+
+      aspect_ratio:'9:16',
+
+      duration_seconds:duration,
+
+      ...imagePayload()
+
+    };
+
+
+    const r =
+      await fetch(
+        API_URL+'/generate-video',
+        {
+
+          method:'POST',
+
+          headers:{
+            'Content-Type':
+              'application/json'
+          },
+
+          body:
+            JSON.stringify(payload)
+
+        }
+      );
+
+
+    const d =
+      await r.json();
+
+
+    if(
+      !r.ok ||
+      !d.ok
+    ){
+
+      throw new Error(
+        formatError(d) +
+        ' ' +
+        (
+          d.details?.error?.message ||
+          ''
+        )
+      );
+
+    }
+
+
+    const op =
+      d.operation_name ||
+      d.operationName ||
+      d.operation ||
+      '';
+
+
+    if(!op){
+
+      throw new Error(
+        'Worker không trả về operation.'
+      );
+
+    }
+
+
+    sceneOperations[i]=op;
+
+
+    await pollVideo(
+      i,
+      op
+    );
+
+
+  }catch(e){
+
+    result.innerHTML =
+
+      '<div class="status error" style="display:block">' +
+
+        '❌ ' +
+        esc(e.message) +
+
+      '</div>';
+
+  }
+
+};
+
+
+
+/* =====================================================
+   THEO DÕI VIDEO VEO
+   ===================================================== */
+
+async function pollVideo(
+  i,
+  op
+){
+
+  const result =
+    $('result-'+i);
+
+
+  for(
+    let n=0;
+    n<90;
+    n++
+  ){
+
+    await new Promise(
+      r =>
+        setTimeout(
+          r,
+          5000
+        )
+    );
+
+
+    const r =
+      await fetch(
+        API_URL +
+        '/video-status?operation=' +
+        encodeURIComponent(op)
+      );
+
+
+    const d =
+      await r.json();
+
+
+    if(
+      !r.ok ||
+      !d.ok
+    ){
+
+      throw new Error(
+        formatError(d)
+      );
+
+    }
+
+
+    if(
+      d.status==='processing' ||
+      d.done===false
+    ){
+
+      result.innerHTML =
+
+        '<div class="status" style="display:block">' +
+
+          '⏳ Veo đang tạo video... ' +
+
+          Math.min(
+            n+1,
+            90
+          ) +
+
+          '/90' +
+
+        '</div>';
+
+
+      continue;
+
+    }
+
+
+    if(
+      d.status==='completed' &&
+      d.video_uri
+    ){
+
+      const src =
+        API_URL +
+        '/video?uri=' +
+        encodeURIComponent(
+          d.video_uri
+        );
+
+
+      result.innerHTML =
+
+        '<div class="video-box">' +
+
+          '<b>✅ Cảnh ' +
+          (i+1) +
+          ' đã tạo xong!</b>' +
+
+          '<br>' +
+
+          '<video ' +
+            'controls ' +
+            'playsinline ' +
+            'src="' +
+            esc(src) +
+            '">' +
+
+          '</video>' +
+
+          '<br>' +
+
+          '<a ' +
+            'href="' +
+            esc(src) +
+            '" ' +
+            'target="_blank">' +
+
+            'Mở video' +
+
+          '</a>' +
+
+        '</div>';
+
+
+      return;
+
+    }
+
+
+    throw new Error(
+      d.gemini_message ||
+      d.error ||
+      'Veo không trả về video.'
+    );
+
+  }
+
+
+  throw new Error(
+    'Veo tạo quá lâu. Hãy thử lại cảnh này.'
+  );
+
+}
+
+
+
+/* =====================================================
+   TẠO TẤT CẢ CẢNH
+   ===================================================== */
+
+$('allBtn')
+.addEventListener(
+  'click',
+  async()=>{
+
+    if(
+      !currentScript?.scenes?.length
+    ){
+
+      return;
+
+    }
+
+
+    const btn =
+      $('allBtn');
+
+
+    btn.disabled=true;
+
+
+    status(
+      $('globalStatus'),
+
+      '🚀 Bắt đầu tạo ' +
+      currentScript.scenes.length +
+      ' cảnh. Mỗi cảnh sẽ tự chờ Veo hoàn tất...'
+    );
+
+
+    try{
+
+
+      for(
+        let i=0;
+        i<currentScript.scenes.length;
+        i++
+      ){
+
+        status(
+          $('globalStatus'),
+
+          '🎬 Đang tạo cảnh ' +
+          (i+1) +
+          '/' +
+          currentScript.scenes.length +
+          '...'
+        );
+
+
+        await window.createScene(i);
+
+      }
+
+
+      status(
+        $('globalStatus'),
+
+        '✅ Đã gửi và xử lý xong quy trình cho tất cả cảnh.',
+
+        'success'
+      );
+
+
+    }catch(e){
+
+      status(
+        $('globalStatus'),
+
+        '❌ ' +
+        esc(e.message),
+
+        'error'
+      );
+
+    }finally{
+
+      btn.disabled=false;
+
+    }
+
+  }
+);
+
+
 </script>
+
 </body>
+
 </html>
